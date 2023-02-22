@@ -16,6 +16,7 @@
 
 #include "external/json.hpp"
 #include "external/simpleppm.h"
+#include "RayTracer.h"
 
 
 using namespace std;
