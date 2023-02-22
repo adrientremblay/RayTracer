@@ -19,15 +19,9 @@ void RayTracer::run() {
     std::vector<double> buffer(3*image_width*image_height);
     for(int j=0;j<image_height;++j){
         for(int i=0;i<image_width;++i){
-            if(((i+j)/255)%2==0){
-                buffer[3*j*image_width+3*i+0]=1;
-                buffer[3*j*image_width+3*i+1]=1;
-                buffer[3*j*image_width+3*i+2]=0;
-            } else {
-                buffer[3*j*image_width+3*i+0]=0;
-                buffer[3*j*image_width+3*i+1]=1;
-                buffer[3*j*image_width+3*i+2]=1;
-            }
+            buffer[3*j*image_width+3*i+0] = double(i) / (image_width - 1);
+            buffer[3*j*image_width+3*i+1] = double(j) / (image_height - 1);
+            buffer[3*j*image_width+3*i+2] = 0.25;
         }
     }
 

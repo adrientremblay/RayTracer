@@ -14,7 +14,9 @@ int save_ppm(std::string file_name, const std::vector<double>& buffer, int dimx,
  
     for (unsigned int j = 0; j < dimy; ++j)
         for (unsigned int i = 0; i < dimx; ++i)
-            ofs << (char) (255.0 * buffer[3*j*dimx+3*i+0]) <<  (char) (255.0 * buffer[3*j*dimx+3*i+1]) << (char) (255.0 * buffer[3*j*dimx+3*i+2]);
+            ofs << (char) (255.0 * buffer[3*j*dimx+3*i+0])
+                << (char) (255.0 * buffer[3*j*dimx+3*i+1])
+                << (char) (255.0 * buffer[3*j*dimx+3*i+2]);
  
     ofs.close();
  
