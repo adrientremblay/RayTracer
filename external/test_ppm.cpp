@@ -35,8 +35,7 @@ int test_save_ppm(){
             }
         }
     }
-               
-             
+
     save_ppm("test.ppm", buffer, dimx, dimy);
     
     return 0;
