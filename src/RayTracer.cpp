@@ -6,6 +6,7 @@
 #include "RayTracer.h"
 #include "simpleppm.h"
 #include <Eigen/Dense>
+#include "RayTracer.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -43,4 +44,8 @@ void RayTracer::run() {
     //std::cerr << "\nDone.\n";
 
     save_ppm("adrien.ppm", buffer, image_width, image_height);
+}
+
+Eigen::Vector3f RayTracer::rayColor(const Ray &ray) {
+    Eigen::Vector3f unit_direction = ray / ray.
 }

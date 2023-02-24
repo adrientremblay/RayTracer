@@ -8,6 +8,9 @@
 #include "Eigen/Dense"
 
 class Ray {
+private:
+    Eigen::Vector3f origin;
+    Eigen::Vector3f direction;
 public:
     Ray();
     Ray(const Eigen::Vector3f& origin, const Eigen::Vector3f& direction);
@@ -15,13 +18,7 @@ public:
     Eigen::Vector3f getOrigin();
     Eigen::Vector3f getDirection();
 
-    Eigen::Vector3f at(double t) const {
-        return origin + t * direction;
-    }
-
-private:
-    Eigen::Vector3f origin;
-    Eigen::Vector3f direction;
+    Eigen::Vector3f at(double t) const;
 };
 
 
