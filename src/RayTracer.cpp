@@ -6,10 +6,6 @@
 #include "RayTracer.h"
 #include "simpleppm.h"
 #include <Eigen/Dense>
-#include "RayTracer.h"
-
-using Eigen::MatrixXd;
-using Eigen::VectorXd;
 
 RayTracer::RayTracer(nlohmann::json& j) {
 
@@ -43,9 +39,9 @@ void RayTracer::run() {
 
             Eigen::Vector3f pixel_color = rayColor(ray);
 
-            buffer[3*j*image_width+3*i+0] = pixel_color.x();
-            buffer[3*j*image_width+3*i+1] = pixel_color.y();
-            buffer[3*j*image_width+3*i+2] = pixel_color.z();
+            buffer[3*(image_height - j - 1)*image_width + 3*i + 0] = pixel_color.x();
+            buffer[3*(image_height - j - 1)*image_width + 3*i + 1] = pixel_color.y();
+            buffer[3*(image_height - j - 1)*image_width + 3*i + 2] = pixel_color.z();
         }
     }
     std::cerr << "\nDone.\n";
