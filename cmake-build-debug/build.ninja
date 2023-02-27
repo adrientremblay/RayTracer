@@ -63,6 +63,13 @@ build CMakeFiles/raytracer.dir/src/RayTracer.cpp.o: CXX_COMPILER__raytracer_Debu
   OBJECT_DIR = CMakeFiles/raytracer.dir
   OBJECT_FILE_DIR = CMakeFiles/raytracer.dir/src
 
+build CMakeFiles/raytracer.dir/src/Ray.cpp.o: CXX_COMPILER__raytracer_Debug /home/adrien/Projects/RayTracer/src/Ray.cpp || cmake_object_order_depends_target_raytracer
+  DEP_FILE = CMakeFiles/raytracer.dir/src/Ray.cpp.o.d
+  FLAGS = -g -DSTUDENT_SOLUTION -std=gnu++14
+  INCLUDES = -I/usr/include/eigen3 -I/home/adrien/Projects/RayTracer/src -I/home/adrien/Projects/RayTracer/external
+  OBJECT_DIR = CMakeFiles/raytracer.dir
+  OBJECT_FILE_DIR = CMakeFiles/raytracer.dir/src
+
 build CMakeFiles/raytracer.dir/external/simpleppm.cpp.o: CXX_COMPILER__raytracer_Debug /home/adrien/Projects/RayTracer/external/simpleppm.cpp || cmake_object_order_depends_target_raytracer
   DEP_FILE = CMakeFiles/raytracer.dir/external/simpleppm.cpp.o.d
   FLAGS = -g -DSTUDENT_SOLUTION -std=gnu++14
@@ -99,7 +106,7 @@ build CMakeFiles/raytracer.dir/external/test_ppm.cpp.o: CXX_COMPILER__raytracer_
 #############################################
 # Link the executable raytracer
 
-build raytracer: CXX_EXECUTABLE_LINKER__raytracer_Debug CMakeFiles/raytracer.dir/main.cpp.o CMakeFiles/raytracer.dir/src/RayTracer.cpp.o CMakeFiles/raytracer.dir/external/simpleppm.cpp.o CMakeFiles/raytracer.dir/external/test_eigen.cpp.o CMakeFiles/raytracer.dir/external/test_json.cpp.o CMakeFiles/raytracer.dir/external/test_ppm.cpp.o
+build raytracer: CXX_EXECUTABLE_LINKER__raytracer_Debug CMakeFiles/raytracer.dir/main.cpp.o CMakeFiles/raytracer.dir/src/RayTracer.cpp.o CMakeFiles/raytracer.dir/src/Ray.cpp.o CMakeFiles/raytracer.dir/external/simpleppm.cpp.o CMakeFiles/raytracer.dir/external/test_eigen.cpp.o CMakeFiles/raytracer.dir/external/test_json.cpp.o CMakeFiles/raytracer.dir/external/test_ppm.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/raytracer.dir
   POST_BUILD = :

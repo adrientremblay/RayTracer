@@ -14,7 +14,7 @@ public:
     RayTracer(nlohmann::json& j);
     void run();
 private:
-    Eigen::Vector3f rayColor(const Ray& ray);
+    Eigen::Vector3f rayColor(Ray& ray);
 };
 
 
