@@ -39,9 +39,12 @@ void RayTracer::run() {
 
             Eigen::Vector3f pixel_color = rayColor(ray);
 
-            buffer[3*(image_height - j - 1)*image_width + 3*i + 0] = pixel_color.x();
-            buffer[3*(image_height - j - 1)*image_width + 3*i + 1] = pixel_color.y();
-            buffer[3*(image_height - j - 1)*image_width + 3*i + 2] = pixel_color.z();
+            const int row = 3 * (image_height - j - 1) * image_width;
+            const int col = 3 * i;
+            const int cell = row + col;
+            buffer[cell + 0] = pixel_color.x();
+            buffer[cell + 1] = pixel_color.y();
+            buffer[cell + 2] = pixel_color.z();
         }
     }
     std::cerr << "\nDone.\n";
