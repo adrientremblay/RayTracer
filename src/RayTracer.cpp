@@ -20,6 +20,8 @@ void RayTracer::run() {
     // Image
     const int image_width = 400; // px
     const int image_height = static_cast<int>(image_width / aspect_ratio); // px
+    const int samples_per_pixel = 100;
+    const double pp_scale = 1.0 / samples_per_pixel;
 
     // Camera
     Camera camera;
@@ -29,17 +31,25 @@ void RayTracer::run() {
     for (int j = 0 ; j < image_height ; j++) {
         std::cerr << "\rScanlines remaining: " << image_height - j << std::flush;
         for (int i = 0 ; i < image_width ; i++){
-            double u = double(i)  / (image_width-1);
-            double v = double(j)  / (image_height-1);
+            Eigen::Vector3f pixel_color(0, 0, 0);
 
-            Eigen::Vector3f pixel_color = rayColor(camera.getRay(u, v));
+            for (int s = 1 ; s <= samples_per_pixel ; s++) {
+                double u = double(i + random_double())  / (image_width-1);
+                double v = double(j + random_double())  / (image_height-1);
+                Ray ray = camera.getRay(u, v);
+                pixel_color += rayColor(ray);
+            }
+
+            const double r = clamp(pixel_color.x() * pp_scale, 0.0, 0.999);
+            const double g = clamp(pixel_color.y() * pp_scale, 0.0, 0.999);
+            const double b = clamp(pixel_color.z() * pp_scale, 0.0, 0.999);
 
             const int row = 3 * (image_height - j - 1) * image_width;
             const int col = 3 * i;
             const int cell = row + col;
-            buffer[cell + 0] = pixel_color.x();
-            buffer[cell + 1] = pixel_color.y();
-            buffer[cell + 2] = pixel_color.z();
+            buffer[cell + 0] = r;
+            buffer[cell + 1] = g;
+            buffer[cell + 2] = b;
         }
     }
     std::cerr << "\nDone.\n";
