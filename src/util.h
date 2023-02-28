@@ -76,4 +76,11 @@ inline Eigen::Vector3f reflect_vector(const Eigen::Vector3f& vector, const Eigen
     return vector - 2 * vector.dot(normal) * normal;
 }
 
+inline Eigen::Vector3f vector_multiply(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2) {
+    float x = v1.x() * v2.x();
+    float y = v1.y() * v2.y();
+    float z = v1.z() * v2.z();
+    return Eigen::Vector3f(x, y, z);
+}
+
 #endif //RAYTRACER_UTIL_H

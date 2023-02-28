@@ -13,7 +13,7 @@ public:
 
     Metal(const Eigen::Vector3f albedo);
 
-    virtual bool scatter(const Ray& rayIn, const HitRecord& hitRecord, Eigen::Vector3f attenuation, Ray& scattered) const override;
+    virtual bool scatter(const Ray& rayIn, const HitRecord& hitRecord, Eigen::Vector3f& attenuation, Ray& scattered) const override;
 };
 
 

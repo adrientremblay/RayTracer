@@ -78,7 +78,7 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth) {
         Eigen::Vector3f attenuation;
 
         if (hitRecord.material->scatter(ray, hitRecord, attenuation, scattered)) {
-            return attenuation + rayColor(scattered, depth-1);
+            return vector_multiply(attenuation, rayColor(scattered, depth-1));
         }
 
         return Eigen::Vector3f(0, 0, 0);

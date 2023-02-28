@@ -10,7 +10,7 @@
 
 class Material {
 public:
-    virtual bool scatter(const Ray& rayIn, const HitRecord& hitRecord, Eigen::Vector3f attenuation, Ray& scattered) const = 0;
+    virtual bool scatter(const Ray& rayIn, const HitRecord& hitRecord, Eigen::Vector3f& attenuation, Ray& scattered) const = 0;
 };
 
 

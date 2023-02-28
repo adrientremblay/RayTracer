@@ -8,7 +8,7 @@ Lambertian::Lambertian(const Eigen::Vector3f albedo) : albedo(albedo){
 
 }
 
-bool Lambertian::scatter(const Ray& rayIn, const HitRecord& hitRecord, Eigen::Vector3f attenuation, Ray& scattered) const {
+bool Lambertian::scatter(const Ray& rayIn, const HitRecord& hitRecord, Eigen::Vector3f& attenuation, Ray& scattered) const {
     Eigen::Vector3f scatter_direction = hitRecord.normal + random_in_hemisphere(hitRecord.normal);
 
     if (scatter_direction.isZero())
