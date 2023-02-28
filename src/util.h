@@ -64,4 +64,12 @@ inline Eigen::Vector3f random_in_unit_sphere_normalized() {
     return random_in_unit_sphere().normalized();
 }
 
+inline Eigen::Vector3f random_in_hemisphere(const Eigen::Vector3f& normal) {
+    Eigen::Vector3f rando = random_in_unit_sphere();
+    if (rando.dot(normal) > 0.0)
+        return rando;
+    else
+        return -rando;
+}
+
 #endif //RAYTRACER_UTIL_H

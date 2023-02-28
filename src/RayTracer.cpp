@@ -65,7 +65,7 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth) {
 
     HitRecord hitRecord;
     if (world.hit(ray, 0.001, infinity, hitRecord)) {
-        Eigen::Vector3f target = hitRecord.point + hitRecord.normal + random_in_unit_sphere_normalized();
+        Eigen::Vector3f target = hitRecord.point + hitRecord.normal + random_in_hemisphere(hitRecord.normal);
 
         return 0.5 * rayColor(Ray(hitRecord.point, target - hitRecord.point), depth-1);
     }
