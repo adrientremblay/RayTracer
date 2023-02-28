@@ -12,6 +12,12 @@ struct HitRecord {
     Eigen::Vector3f point;
     Eigen::Vector3f normal;
     double t;
+    bool rayFromOutside;
+
+    inline void setFaceNormal(const Ray& ray, const Eigen::Vector3f& outwardNormal) {
+        rayFromOutside = ray.getDirection().dot(outwardNormal) < 0;
+        normal = rayFromOutside ? outwardNormal : -outwardNormal;
+    }
 };
 
 class Hittable {
