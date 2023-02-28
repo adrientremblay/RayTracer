@@ -10,10 +10,12 @@
 #include "Sphere.h"
 #include "util.h"
 #include "Camera.h"
+#include "materials/Lambertian.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
-    world.add(std::make_shared<Sphere>(Eigen::Vector3f(0, 0, -1), 0.5));
-    world.add(std::make_shared<Sphere>(Eigen::Vector3f(0,-100.5,-1), 100));
+    std::shared_ptr<Lambertian> mat = std::make_shared<Lambertian>(Eigen::Vector3f(0.5, 0.5, 0.5));
+    world.add(std::make_shared<Sphere>(Eigen::Vector3f(0, 0, -1), 0.5, mat));
+    world.add(std::make_shared<Sphere>(Eigen::Vector3f(0,-100.5,-1), 100,  mat));
 }
 
 void RayTracer::run() {
@@ -65,9 +67,14 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth) {
 
     HitRecord hitRecord;
     if (world.hit(ray, 0.001, infinity, hitRecord)) {
-        Eigen::Vector3f target = hitRecord.point + hitRecord.normal + random_in_hemisphere(hitRecord.normal);
+        Ray scattered;
+        Eigen::Vector3f attenuation;
 
-        return 0.5 * rayColor(Ray(hitRecord.point, target - hitRecord.point), depth-1);
+        if (hitRecord.material->scatter(ray, hitRecord, attenuation, scattered)) {
+            return attenuation + rayColor(scattered, depth-1);
+        }
+
+        return Eigen::Vector3f(0, 0, 0);
     }
 
     Eigen::Vector3f unit_direction = ray.getDirection().normalized();

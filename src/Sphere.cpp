@@ -4,7 +4,7 @@
 
 #include "Sphere.h"
 
-Sphere::Sphere(Eigen::Vector3f center, double radius) : center(center), radius(radius) {
+Sphere::Sphere(Eigen::Vector3f center, double radius, std::shared_ptr<Material> material) : center(center), radius(radius), material(material) {
 
 }
 
@@ -31,6 +31,7 @@ bool Sphere::hit(const Ray& ray, double tMin, double tMax, HitRecord& hitRecord)
     hitRecord.point = ray.at(hitRecord.t);
     Eigen::Vector3f outwardNormal = (hitRecord.point - center) / radius; // wont be a unit vector??
     hitRecord.setFaceNormal(ray, outwardNormal);
+    hitRecord.material = material;
 
     return true;
 }
