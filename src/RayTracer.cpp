@@ -20,8 +20,9 @@ void RayTracer::run() {
     // Image
     const int image_width = 400; // px
     const int image_height = static_cast<int>(image_width / aspect_ratio); // px
-    const int samples_per_pixel = 100;
+    const int samples_per_pixel = 10; // turn this up for good renders
     const double pp_scale = 1.0 / samples_per_pixel;
+    const double max_depth = 50;
 
     // Camera
     Camera camera;
@@ -37,7 +38,7 @@ void RayTracer::run() {
                 double u = double(i + random_double())  / (image_width-1);
                 double v = double(j + random_double())  / (image_height-1);
                 Ray ray = camera.getRay(u, v);
-                pixel_color += rayColor(ray);
+                pixel_color += rayColor(ray, max_depth);
             }
 
             const double r = clamp(pixel_color.x() * pp_scale, 0.0, 0.999);
@@ -57,10 +58,15 @@ void RayTracer::run() {
     save_ppm("adrien.ppm", buffer, image_width, image_height);
 }
 
-Eigen::Vector3f RayTracer::rayColor(const Ray& ray) {
+Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth) {
+    if (depth <= 0)
+        return Eigen::Vector3f(0, 0, 0);
+
     HitRecord hitRecord;
     if (world.hit(ray, 0, infinity, hitRecord)) {
-        return 0.5 * (hitRecord.normal + Eigen::Vector3f(1, 1, 1));
+        Eigen::Vector3f target = hitRecord.point + hitRecord.normal + random_in_unit_sphere(); // todo why the hitRecord normal???
+
+        return 0.5 * rayColor(Ray(hitRecord.point, target - hitRecord.point), depth-1);
     }
 
     Eigen::Vector3f unit_direction = ray.getDirection().normalized();

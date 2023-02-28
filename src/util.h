@@ -9,6 +9,7 @@
 #include <limits>
 #include <memory>
 #include <cstdlib>
+#include <Eigen/Dense>
 
 const double infinity = std::numeric_limits<double>::infinity();
 const double pi = 3.1415926535897932385;
@@ -40,6 +41,23 @@ inline double clamp(double x, double min, double max) {
     if (x > max)
         return max;
     return x;
+}
+
+inline Eigen::Vector3f random_vector() {
+    return Eigen::Vector3f(random_double(), random_double(), random_double());
+}
+
+inline Eigen::Vector3f random_vector(double min, double max) {
+    return Eigen::Vector3f(random_double(min, max), random_double(min, max), random_double(min, max));
+}
+
+inline Eigen::Vector3f random_in_unit_sphere() {
+    while (true) {
+        Eigen::Vector3f point = random_vector(-1, 1);
+        if (point.squaredNorm() >= 1)
+            continue;
+        return point;
+    }
 }
 
 #endif //RAYTRACER_UTIL_H
