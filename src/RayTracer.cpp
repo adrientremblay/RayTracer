@@ -22,7 +22,7 @@ void RayTracer::run() {
     const int image_height = static_cast<int>(image_width / aspect_ratio); // px
     const int samples_per_pixel = 10; // turn this up for good renders
     const double pp_scale = 1.0 / samples_per_pixel;
-    const double max_depth = 50;
+    const double max_depth = 10;
 
     // Camera
     Camera camera;
@@ -41,9 +41,10 @@ void RayTracer::run() {
                 pixel_color += rayColor(ray, max_depth);
             }
 
-            const double r = clamp(pixel_color.x() * pp_scale, 0.0, 0.999);
-            const double g = clamp(pixel_color.y() * pp_scale, 0.0, 0.999);
-            const double b = clamp(pixel_color.z() * pp_scale, 0.0, 0.999);
+            // scale and gamma correct and clamp
+            const double r = clamp(sqrt(pixel_color.x() * pp_scale), 0.0, 0.999);
+            const double g = clamp(sqrt(pixel_color.y() * pp_scale), 0.0, 0.999);
+            const double b = clamp(sqrt(pixel_color.z() * pp_scale), 0.0, 0.999);
 
             const int row = 3 * (image_height - j - 1) * image_width;
             const int col = 3 * i;
@@ -63,8 +64,8 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth) {
         return Eigen::Vector3f(0, 0, 0);
 
     HitRecord hitRecord;
-    if (world.hit(ray, 0, infinity, hitRecord)) {
-        Eigen::Vector3f target = hitRecord.point + hitRecord.normal + random_in_unit_sphere(); // todo why the hitRecord normal???
+    if (world.hit(ray, 0.001, infinity, hitRecord)) {
+        Eigen::Vector3f target = hitRecord.point + hitRecord.normal + random_in_unit_sphere();
 
         return 0.5 * rayColor(Ray(hitRecord.point, target - hitRecord.point), depth-1);
     }
