@@ -7,9 +7,8 @@
 #include "simpleppm.h"
 #include <Eigen/Dense>
 #include <memory>
-#include "HittableList.h"
 #include "Sphere.h"
-#include "constants.h"
+#include "util.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
     world.add(std::make_shared<Sphere>(Eigen::Vector3f(0, 0, -1), 0.5));
