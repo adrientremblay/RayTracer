@@ -15,8 +15,8 @@ public:
     Ray();
     Ray(const Eigen::Vector3f& origin, const Eigen::Vector3f& direction);
 
-    Eigen::Vector3f getOrigin();
-    Eigen::Vector3f getDirection();
+    Eigen::Vector3f getOrigin() const;
+    Eigen::Vector3f getDirection() const;
 
     Eigen::Vector3f at(double t) const;
 };

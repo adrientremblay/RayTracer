@@ -13,14 +13,14 @@ RayTracer::RayTracer(nlohmann::json& j) {
 
 void RayTracer::run() {
     // Image
-    const float aspect_ratio = 16.0 / 9.0;
+    const double aspect_ratio = 16.0 / 9.0;
     const int image_width = 400; // px
     const int image_height = static_cast<int>(image_width / aspect_ratio); // px
 
     // Camera
-    const float viewport_height = 2.0;
-    const float viewport_width = aspect_ratio * viewport_height;
-    const float focal_length = 1.0;
+    const double viewport_height = 2.0;
+    const double viewport_width = aspect_ratio * viewport_height;
+    const double focal_length = 1.0;
 
     const Eigen::Vector3f origin = Eigen::Vector3f(0, 0, 0);
     const Eigen::Vector3f horizontal = Eigen::Vector3f(viewport_width, 0, 0);
@@ -32,8 +32,8 @@ void RayTracer::run() {
     for (int j = 0 ; j < image_height ; j++) {
         std::cerr << "\rScanlines remaining: " << image_height - j << std::flush;
         for (int i = 0 ; i < image_width ; i++){
-            float u = float(i)  / (image_width-1);
-            float v = float(j)  / (image_height-1);
+            double u = double(i)  / (image_width-1);
+            double v = double(j)  / (image_height-1);
 
             Ray ray = Ray(origin, lower_left_corner + u*horizontal + v*vertical - origin);
 
@@ -52,8 +52,21 @@ void RayTracer::run() {
     save_ppm("adrien.ppm", buffer, image_width, image_height);
 }
 
-Eigen::Vector3f RayTracer::rayColor(Ray& ray) {
+Eigen::Vector3f RayTracer::rayColor(const Ray& ray) {
+    if (hitSphere(Eigen::Vector3f(0, 0, -1), 0.5, ray))
+        return Eigen::Vector3f(1, 0, 0);
+
     Eigen::Vector3f unit_direction = ray.getDirection().normalized();
     double t = 0.5 * (unit_direction.y() + 1.0);
     return (1.0 - t) * Eigen::Vector3f(1.0, 1.0, 1.0) + t * Eigen::Vector3f(0.5, 0.7, 1.0);
+}
+
+bool RayTracer::hitSphere(const Eigen::Vector3f& center, double radius, const Ray& ray) {
+    Eigen::Vector3f oc = ray.getOrigin() - center;
+    double a = ray.getDirection().dot(ray.getDirection());
+    double b = 2.0 * oc.dot(ray.getDirection());
+    double c = oc.dot(oc) - radius*radius;
+    double discriminant = b*b - 4*a*c;
+
+    return discriminant > 0;
 }

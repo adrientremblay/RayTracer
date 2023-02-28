@@ -12,10 +12,10 @@ Eigen::Vector3f Ray::at(double t) const {
     return origin + t * direction;
 }
 
-Eigen::Vector3f Ray::getOrigin() {
+Eigen::Vector3f Ray::getOrigin() const {
     return origin;
 }
 
-Eigen::Vector3f Ray::getDirection() {
+Eigen::Vector3f Ray::getDirection() const {
    return direction;
 }

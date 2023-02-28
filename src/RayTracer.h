@@ -14,7 +14,8 @@ public:
     RayTracer(nlohmann::json& j);
     void run();
 private:
-    Eigen::Vector3f rayColor(Ray& ray);
+    Eigen::Vector3f rayColor(const Ray& ray);
+    bool hitSphere(const Eigen::Vector3f& center, double radius, const Ray& ray);
 };
 
 
