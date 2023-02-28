@@ -15,7 +15,7 @@ public:
     void run();
 private:
     Eigen::Vector3f rayColor(const Ray& ray);
-    bool hitSphere(const Eigen::Vector3f& center, double radius, const Ray& ray);
+    double hitSphere(const Eigen::Vector3f& center, double radius, const Ray& ray);
 };
 
 

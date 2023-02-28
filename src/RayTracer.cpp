@@ -53,20 +53,36 @@ void RayTracer::run() {
 }
 
 Eigen::Vector3f RayTracer::rayColor(const Ray& ray) {
-    if (hitSphere(Eigen::Vector3f(0, 0, -1), 0.5, ray))
-        return Eigen::Vector3f(1, 0, 0);
+    const Eigen::Vector3f sphereOrigin(0, 0, -1);
+
+    auto t = hitSphere(sphereOrigin, 0.5, ray);
+    if (t > 0.0) {
+        Eigen::Vector3f normal = (ray.at(t) - sphereOrigin).normalized();
+        return 0.5 * Eigen::Vector3f(normal.x()+1, normal.y()+1, normal.z()+1);
+    }
 
     Eigen::Vector3f unit_direction = ray.getDirection().normalized();
-    double t = 0.5 * (unit_direction.y() + 1.0);
-    return (1.0 - t) * Eigen::Vector3f(1.0, 1.0, 1.0) + t * Eigen::Vector3f(0.5, 0.7, 1.0);
+    double y = 0.5 * (unit_direction.y() + 1.0);
+    return (1.0 - y) * Eigen::Vector3f(1.0, 1.0, 1.0) + y * Eigen::Vector3f(0.5, 0.7, 1.0);
 }
 
-bool RayTracer::hitSphere(const Eigen::Vector3f& center, double radius, const Ray& ray) {
+/**
+ *
+ *
+ * @param center
+ * @param radius
+ * @param ray
+ * @return the t of the the ray where the hit occurs
+ */
+double RayTracer::hitSphere(const Eigen::Vector3f& center, double radius, const Ray& ray) {
     Eigen::Vector3f oc = ray.getOrigin() - center;
     double a = ray.getDirection().dot(ray.getDirection());
     double b = 2.0 * oc.dot(ray.getDirection());
     double c = oc.dot(oc) - radius*radius;
     double discriminant = b*b - 4*a*c;
 
-    return discriminant > 0;
+    if (discriminant < 0)
+        return -1.0;
+
+    return (-b - sqrt(discriminant)) / (2.0*a);
 }
