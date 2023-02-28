@@ -76,13 +76,13 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray) {
  */
 double RayTracer::hitSphere(const Eigen::Vector3f& center, double radius, const Ray& ray) {
     Eigen::Vector3f oc = ray.getOrigin() - center;
-    double a = ray.getDirection().dot(ray.getDirection());
-    double b = 2.0 * oc.dot(ray.getDirection());
-    double c = oc.dot(oc) - radius*radius;
-    double discriminant = b*b - 4*a*c;
+    double a = ray.getDirection().squaredNorm(); // magnitude squared
+    double half_b = oc.dot(ray.getDirection());
+    double c = oc.squaredNorm() - radius*radius;
+    double discriminant = half_b * half_b - a * c;
 
     if (discriminant < 0)
         return -1.0;
 
-    return (-b - sqrt(discriminant)) / (2.0*a);
+    return (-half_b - sqrt(discriminant)) / a;
 }
