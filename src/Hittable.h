@@ -7,10 +7,14 @@
 
 #include "Eigen/Dense"
 #include "Ray.h"
+#include <memory>
+
+class Material;
 
 struct HitRecord {
     Eigen::Vector3f point;
     Eigen::Vector3f normal;
+    std::shared_ptr<Material> material;
     double t;
     bool rayFromOutside;
 
