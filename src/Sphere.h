@@ -7,7 +7,7 @@
 
 #include "Hittable.h"
 
-class Sphere : Hittable {
+class Sphere : public Hittable {
 public:
     Eigen::Vector3f center;
     double radius;

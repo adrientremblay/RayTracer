@@ -8,14 +8,17 @@
 #include "json.hpp"
 #include "Eigen/Dense"
 #include "Ray.h"
+#include "HittableList.h"
+#include "Sphere.h"
 
 class RayTracer {
+private:
+    HittableList world;
 public:
     RayTracer(nlohmann::json& j);
     void run();
 private:
     Eigen::Vector3f rayColor(const Ray& ray);
-    double hitSphere(const Eigen::Vector3f& center, double radius, const Ray& ray);
 };
 
 
