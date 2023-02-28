@@ -9,6 +9,7 @@
 #include <memory>
 #include "Sphere.h"
 #include "util.h"
+#include "Camera.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
     world.add(std::make_shared<Sphere>(Eigen::Vector3f(0, 0, -1), 0.5));
@@ -17,19 +18,11 @@ RayTracer::RayTracer(nlohmann::json& j) {
 
 void RayTracer::run() {
     // Image
-    const double aspect_ratio = 16.0 / 9.0;
     const int image_width = 400; // px
     const int image_height = static_cast<int>(image_width / aspect_ratio); // px
 
     // Camera
-    const double viewport_height = 2.0;
-    const double viewport_width = aspect_ratio * viewport_height;
-    const double focal_length = 1.0;
-
-    const Eigen::Vector3f origin = Eigen::Vector3f(0, 0, 0);
-    const Eigen::Vector3f horizontal = Eigen::Vector3f(viewport_width, 0, 0);
-    const Eigen::Vector3f vertical = Eigen::Vector3f(0, viewport_height, 0);
-    const Eigen::Vector3f lower_left_corner = origin - horizontal / 2 - vertical / 2 - Eigen::Vector3f(0, 0, focal_length);
+    Camera camera;
 
     // Render
     std::vector<double> buffer(3*image_width*image_height);
@@ -39,9 +32,7 @@ void RayTracer::run() {
             double u = double(i)  / (image_width-1);
             double v = double(j)  / (image_height-1);
 
-            Ray ray = Ray(origin, lower_left_corner + u*horizontal + v*vertical - origin);
-
-            Eigen::Vector3f pixel_color = rayColor(ray);
+            Eigen::Vector3f pixel_color = rayColor(camera.getRay(u, v));
 
             const int row = 3 * (image_height - j - 1) * image_width;
             const int col = 3 * i;
