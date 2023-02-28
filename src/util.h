@@ -60,4 +60,8 @@ inline Eigen::Vector3f random_in_unit_sphere() {
     }
 }
 
+inline Eigen::Vector3f random_in_unit_sphere_normalized() {
+    return random_in_unit_sphere().normalized();
+}
+
 #endif //RAYTRACER_UTIL_H
