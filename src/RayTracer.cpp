@@ -62,8 +62,8 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray) {
     }
 
     Eigen::Vector3f unit_direction = ray.getDirection().normalized();
-    double y = 0.5 * (unit_direction.y() + 1.0);
-    return (1.0 - y) * Eigen::Vector3f(1.0, 1.0, 1.0) + y * Eigen::Vector3f(0.5, 0.7, 1.0);
+    double blueness = 0.5 * (unit_direction.y() + 1.0);
+    return (1.0 - blueness) * Eigen::Vector3f(1.0, 1.0, 1.0) + blueness * Eigen::Vector3f(0.5, 0.7, 1.0);
 }
 
 /**
