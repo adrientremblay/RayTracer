@@ -72,4 +72,8 @@ inline Eigen::Vector3f random_in_hemisphere(const Eigen::Vector3f& normal) {
         return -rando;
 }
 
+inline Eigen::Vector3f reflect_vector(const Eigen::Vector3f& vector, const Eigen::Vector3f& normal) {
+    return vector - 2 * vector.dot(normal) * normal;
+}
+
 #endif //RAYTRACER_UTIL_H

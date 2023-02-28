@@ -11,11 +11,18 @@
 #include "util.h"
 #include "Camera.h"
 #include "materials/Lambertian.h"
+#include "materials/Metal.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
-    std::shared_ptr<Lambertian> mat = std::make_shared<Lambertian>(Eigen::Vector3f(0.5, 0.5, 0.5));
-    world.add(std::make_shared<Sphere>(Eigen::Vector3f(0, 0, -1), 0.5, mat));
-    world.add(std::make_shared<Sphere>(Eigen::Vector3f(0,-100.5,-1), 100,  mat));
+    std::shared_ptr<Lambertian> material_ground = std::make_shared<Lambertian>(Eigen::Vector3f(0.8, 0.8, 0.0));
+    std::shared_ptr<Lambertian> material_center = std::make_shared<Lambertian>(Eigen::Vector3f(0.7, 0.3, 0.3));
+    std::shared_ptr<Metal> material_left = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.8, 0.8));
+    std::shared_ptr<Metal> material_right = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.6, 0.2));
+
+    world.add(std::make_shared<Sphere>(Eigen::Vector3f(0,-100.5,-1), 100,  material_ground));
+    world.add(std::make_shared<Sphere>(Eigen::Vector3f(0, 0, -1), 0.5, material_center));
+    world.add(std::make_shared<Sphere>(Eigen::Vector3f(-1.0, 0, -1), 0.5, material_left));
+    world.add(std::make_shared<Sphere>(Eigen::Vector3f(1.0, 0, -1), 0.5, material_right));
 }
 
 void RayTracer::run() {
