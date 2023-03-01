@@ -16,8 +16,8 @@
 RayTracer::RayTracer(nlohmann::json& j) {
     std::shared_ptr<Lambertian> material_ground = std::make_shared<Lambertian>(Eigen::Vector3f(0.8, 0.8, 0.0));
     std::shared_ptr<Lambertian> material_center = std::make_shared<Lambertian>(Eigen::Vector3f(0.7, 0.3, 0.3));
-    std::shared_ptr<Metal> material_left = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.8, 0.8));
-    std::shared_ptr<Metal> material_right = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.6, 0.2));
+    std::shared_ptr<Metal> material_left = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.8, 0.8), 0.3);
+    std::shared_ptr<Metal> material_right = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.6, 0.2), 1.0);
 
     world.add(std::make_shared<Sphere>(Eigen::Vector3f(0,-100.5,-1), 100,  material_ground));
     world.add(std::make_shared<Sphere>(Eigen::Vector3f(0, 0, -1), 0.5, material_center));
@@ -29,9 +29,9 @@ void RayTracer::run() {
     // Image
     const int image_width = 400; // px
     const int image_height = static_cast<int>(image_width / aspect_ratio); // px
-    const int samples_per_pixel = 10; // turn this up for good renders
+    const int samples_per_pixel = 20; // turn this up for good renders
     const double pp_scale = 1.0 / samples_per_pixel;
-    const double max_depth = 10;
+    const double max_depth = 20;
 
     // Camera
     Camera camera;
