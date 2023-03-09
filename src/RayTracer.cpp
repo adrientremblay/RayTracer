@@ -29,7 +29,15 @@ RayTracer::RayTracer(nlohmann::json& j) {
     nlohmann::json::iterator it;
     if ((it = j.find("geometry")) != j.end()) {
         for (auto& [key, geometry] : (*it).items()) {
-            std::cout << *geometry.find("type") << "\n";
+             std::string geometry_type = *geometry.find("type");
+             if (geometry_type == "sphere") {
+                 std::vector<float> centre = *geometry.find("centre");
+                 Eigen::Vector3f centre_vector = Eigen::Vector3f(centre.at(0), centre.at(1), centre.at(2));
+
+                 float sphere_radius = *geometry.find("radius");
+
+                 world.add(std::make_shared<Sphere>(centre_vector, sphere_radius, material_right));
+             }
         }
     }
 
