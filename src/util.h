@@ -83,4 +83,11 @@ inline Eigen::Vector3f vector_multiply(const Eigen::Vector3f& v1, const Eigen::V
     return Eigen::Vector3f(x, y, z);
 }
 
+inline Eigen::Vector3f refract(const Eigen::Vector3f& ray, const Eigen::Vector3f& normal, double etai_over_etat) {
+    auto cos_theta = fmin((-ray).dot(normal), 1);
+    Eigen::Vector3f ray_out_perp = etai_over_etat * (ray + cos_theta * normal);
+    Eigen::Vector3f ray_out_parallel = -sqrt(fabs(1.0 - ray_out_perp.squaredNorm())) * normal;
+    return ray_out_perp + ray_out_parallel;
+}
+
 #endif //RAYTRACER_UTIL_H

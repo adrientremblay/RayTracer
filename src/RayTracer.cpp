@@ -19,10 +19,20 @@ RayTracer::RayTracer(nlohmann::json& j) {
     std::shared_ptr<Metal> material_left = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.8, 0.8), 0.3);
     std::shared_ptr<Metal> material_right = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.6, 0.2), 1.0);
 
+    /*
     world.add(std::make_shared<Sphere>(Eigen::Vector3f(0,-100.5,-1), 100,  material_ground));
     world.add(std::make_shared<Sphere>(Eigen::Vector3f(0, 0, -1), 0.5, material_center));
     world.add(std::make_shared<Sphere>(Eigen::Vector3f(-1.0, 0, -1), 0.5, material_left));
     world.add(std::make_shared<Sphere>(Eigen::Vector3f(1.0, 0, -1), 0.5, material_right));
+     */
+
+    nlohmann::json::iterator it;
+    if ((it = j.find("geometry")) != j.end()) {
+        for (auto& [key, geometry] : (*it).items()) {
+            std::cout << *geometry.find("type") << "\n";
+        }
+    }
+
 }
 
 void RayTracer::run() {
