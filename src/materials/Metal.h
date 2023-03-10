@@ -7,6 +7,7 @@
 
 #include "Material.h"
 
+/*
 class Metal : public Material {
 public:
     Eigen::Vector3f albedo;
@@ -16,6 +17,6 @@ public:
 
     virtual bool scatter(const Ray& rayIn, const HitRecord& hitRecord, Eigen::Vector3f& attenuation, Ray& scattered) const override;
 };
-
+*/
 
 #endif //RAYTRACER_METAL_H

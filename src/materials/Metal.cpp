@@ -5,6 +5,7 @@
 #include "Metal.h"
 #include "util.h"
 
+/*
 Metal::Metal(const Eigen::Vector3f& albedo, double fuzz) : albedo(albedo), fuzz(fuzz <= 1 ? fuzz : 1) {
 
 }
@@ -15,3 +16,5 @@ bool Metal::scatter(const Ray &rayIn, const HitRecord &hitRecord, Eigen::Vector3
     attenuation = albedo;
     return scattered.getDirection().dot(hitRecord.normal) > 0;
 }
+
+ */

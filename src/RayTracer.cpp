@@ -12,12 +12,15 @@
 #include "Camera.h"
 #include "materials/Lambertian.h"
 #include "materials/Metal.h"
+#include "materials/Phong.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
+    /*
     std::shared_ptr<Lambertian> material_ground = std::make_shared<Lambertian>(Eigen::Vector3f(0.8, 0.8, 0.0));
     std::shared_ptr<Lambertian> material_center = std::make_shared<Lambertian>(Eigen::Vector3f(0.7, 0.3, 0.3));
     std::shared_ptr<Metal> material_left = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.8, 0.8), 0.3);
     std::shared_ptr<Metal> material_right = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.6, 0.2), 1.0);
+     */
 
     /*
     world.add(std::make_shared<Sphere>(Eigen::Vector3f(0,-100.5,-1), 100,  material_ground));
@@ -29,15 +32,34 @@ RayTracer::RayTracer(nlohmann::json& j) {
     nlohmann::json::iterator it;
     if ((it = j.find("geometry")) != j.end()) {
         for (auto& [key, geometry] : (*it).items()) {
-             std::string geometry_type = *geometry.find("type");
-             if (geometry_type == "sphere") {
-                 std::vector<float> centre = *geometry.find("centre");
-                 Eigen::Vector3f centre_vector = Eigen::Vector3f(centre.at(0), centre.at(1), centre.at(2));
+            // Material
 
-                 float sphere_radius = *geometry.find("radius");
+            std::vector<float> ac = *geometry.find("ac");
+            Eigen::Vector3f ambient_color = Eigen::Vector3f(ac.at(0), ac.at(1), ac.at(2));
 
-                 world.add(std::make_shared<Sphere>(centre_vector, sphere_radius, material_right));
-             }
+            std::vector<float> dc = *geometry.find("dc");
+            Eigen::Vector3f diffuse_color = Eigen::Vector3f(dc.at(0), dc.at(1), dc.at(2));
+
+            std::vector<float> sc = *geometry.find("sc");
+            Eigen::Vector3f specular_color = Eigen::Vector3f(sc.at(0), sc.at(1), sc.at(2));
+
+            float ambient_coeff = *geometry.find("ka");
+            float diffuse_coeff = *geometry.find("kd");
+            float specular_coeff = *geometry.find("ks");
+
+            std::shared_ptr<Phong> geometry_material = std::make_shared<Phong>(ambient_color, diffuse_color, specular_color,
+                                                                               ambient_coeff, diffuse_coeff, specular_coeff);
+
+            // type specific stuff
+            std::string geometry_type = *geometry.find("type");
+            if (geometry_type == "sphere") {
+                std::vector<float> centre = *geometry.find("centre");
+                Eigen::Vector3f centre_vector = Eigen::Vector3f(centre.at(0), centre.at(1), centre.at(2));
+
+                float sphere_radius = *geometry.find("radius");
+
+                world.add(std::make_shared<Sphere>(centre_vector, sphere_radius, geometry_material));
+            }
         }
     }
 
@@ -92,16 +114,20 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth) {
 
     HitRecord hitRecord;
     if (world.hit(ray, 0.001, infinity, hitRecord)) {
+        return hitRecord.material->color(ray, hitRecord);
+
+        /*
         Ray scattered;
         Eigen::Vector3f attenuation;
-
         if (hitRecord.material->scatter(ray, hitRecord, attenuation, scattered)) {
             return vector_multiply(attenuation, rayColor(scattered, depth-1));
         }
 
         return Eigen::Vector3f(0, 0, 0);
+        */
     }
 
+    // Background Color
     Eigen::Vector3f unit_direction = ray.getDirection().normalized();
     double blueness = 0.5 * (unit_direction.y() + 1.0);
     return (1.0 - blueness) * Eigen::Vector3f(1.0, 1.0, 1.0) + blueness * Eigen::Vector3f(0.5, 0.7, 1.0);

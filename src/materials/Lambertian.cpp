@@ -4,6 +4,8 @@
 
 #include "Lambertian.h"
 
+/*
+
 Lambertian::Lambertian(const Eigen::Vector3f albedo) : albedo(albedo){
 
 }
@@ -18,3 +20,4 @@ bool Lambertian::scatter(const Ray& rayIn, const HitRecord& hitRecord, Eigen::Ve
     attenuation = albedo;
     return true;
 }
+ */
