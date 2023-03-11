@@ -5,7 +5,7 @@
 #ifndef RAYTRACER_HITTABLELIST_H
 #define RAYTRACER_HITTABLELIST_H
 
-#include "Hittable.h"
+#include "geometry/Hittable.h"
 #include <memory>
 #include <vector>
 

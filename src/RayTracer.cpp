@@ -7,10 +7,11 @@
 #include "simpleppm.h"
 #include <Eigen/Dense>
 #include <memory>
-#include "Sphere.h"
+#include "geometry/Sphere.h"
 #include "util.h"
 #include "Camera.h"
 #include "materials/Phong.h"
+#include "geometry/Rectangle.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
     /*
@@ -59,6 +60,20 @@ RayTracer::RayTracer(nlohmann::json& j) {
                 float sphere_radius = *geometry.find("radius");
 
                 world.add(std::make_shared<Sphere>(centre_vector, sphere_radius, geometry_material));
+            } else if (geometry_type == "rectangle") {
+                std::vector<float> p1 = *geometry.find("p1");
+                Eigen::Vector3f point_1 = Eigen::Vector3f(p1.at(0), p1.at(1), p1.at(2));
+
+                std::vector<float> p2 = *geometry.find("p2");
+                Eigen::Vector3f point_2 = Eigen::Vector3f(p2.at(0), p2.at(1), p2.at(2));
+
+                std::vector<float> p3 = *geometry.find("p3");
+                Eigen::Vector3f point_3 = Eigen::Vector3f(p3.at(0), p3.at(1), p3.at(2));
+
+                std::vector<float> p4 = *geometry.find("p4");
+                Eigen::Vector3f point_4 = Eigen::Vector3f(p4.at(0), p4.at(1), p4.at(2));
+
+                world.add(std::make_shared<Rectangle>(point_1, point_2, point_3, point_4, geometry_material));
             }
         }
     }
@@ -81,7 +96,6 @@ RayTracer::RayTracer(nlohmann::json& j) {
             }
         }
     }
-
 }
 
 void RayTracer::run() {

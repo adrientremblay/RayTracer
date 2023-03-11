@@ -12,5 +12,5 @@ Camera::Camera() {
 }
 
 Ray Camera::getRay(double u, double v) const {
-    return Ray(origin, lowerLeftCorner + u*horizontal + v*vertical - origin);
+    return Ray(origin, (lowerLeftCorner + u*horizontal + v*vertical - origin).normalized());
 }

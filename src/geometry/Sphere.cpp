@@ -29,7 +29,7 @@ bool Sphere::hit(const Ray& ray, double tMin, double tMax, HitRecord& hitRecord)
 
     hitRecord.t = root;
     hitRecord.point = ray.at(hitRecord.t);
-    Eigen::Vector3f outwardNormal = (hitRecord.point - center) / radius; // wont be a unit vector??
+    Eigen::Vector3f outwardNormal = (hitRecord.point - center) / radius;
     hitRecord.setFaceNormal(ray, outwardNormal);
     hitRecord.material = material;
 

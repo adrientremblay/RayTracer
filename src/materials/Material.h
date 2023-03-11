@@ -6,7 +6,7 @@
 #define RAYTRACER_MATERIAL_H
 
 #include <vector>
-#include "Hittable.h"
+#include "geometry/Hittable.h"
 #include "util.h"
 #include "lights/PointLight.h"
 
