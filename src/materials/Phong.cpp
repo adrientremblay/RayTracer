@@ -21,7 +21,7 @@ Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const
 
     Eigen::Vector3f ambient = vector_multiply(light.ambientColor,  ambientCoeff * ambientColor);
     Eigen::Vector3f diffuse = vector_multiply(light.diffuseColor, diffuseCoeff * light_direction.dot(hitRecord.normal) * diffuseColor);
-    Eigen::Vector3f specular = specularCoeff * pow(view_direction.dot(reflect_vector(light_direction, hitRecord.normal)), pc) * specularColor;
+    Eigen::Vector3f specular = specularCoeff * pow(std::max(view_direction.dot(halfway_vector), 0.0f), 10.0) * specularColor;
 
      return ambient + diffuse + specular;
 }
