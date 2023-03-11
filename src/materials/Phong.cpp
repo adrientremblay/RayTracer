@@ -13,7 +13,7 @@ Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const
     // todo: shitty code
     PointLight light = lights.at(0);
 
-    Eigen::Vector3f light_direction = hitRecord.point - light.center;
+    Eigen::Vector3f light_direction = (hitRecord.point - light.center).normalized();
     float pc = 10;
 
     float coeff = -light_direction.dot(hitRecord.normal);
