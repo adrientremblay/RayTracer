@@ -10,6 +10,8 @@ Phong::Phong(const Eigen::Vector3f &ambientColor, const Eigen::Vector3f &diffuse
 }
 
 Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<PointLight>& lights) const {
+    return Eigen::Vector3f(1, 0, 0);
+
     // todo: get lights properly
     PointLight light = lights.at(0);
 

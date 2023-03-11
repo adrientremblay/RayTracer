@@ -12,15 +12,22 @@ Rectangle::Rectangle(Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3,
 }
 
 bool Rectangle::hit(const Ray& ray, double tMin, double tMax, HitRecord& hitRecord) const {
-    // todo: this is a plane hit
+    // Checking if inside plane
     float denom = normal.dot(ray.getDirection());
-
     if (std::abs(denom) < 1e-6)
         return false;
-
     float t = (p1 - ray.getOrigin()).dot(normal) / denom;
-
     if (t < 0)
+        return false;
+
+    // Checking if inside rectangle
+    Eigen::Vector3f point_on_plane = ray.at(t);
+    Eigen::Vector3f v = point_on_plane - p1;
+
+    float alpha = v.dot(p2 - p1) / (p2-p1).dot(p2 - p1);
+    float beta = v.dot(p4 - p1) / (p4-p1).dot(p4 - p1);
+
+    if (!(alpha >= 0 && alpha <= 1 && beta >= 0 && beta <= 1))
         return false;
 
     hitRecord.t = t;
