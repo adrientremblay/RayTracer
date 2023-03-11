@@ -10,8 +10,6 @@
 #include "Sphere.h"
 #include "util.h"
 #include "Camera.h"
-#include "materials/Lambertian.h"
-#include "materials/Metal.h"
 #include "materials/Phong.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {

@@ -10,5 +10,14 @@ Phong::Phong(const Eigen::Vector3f &ambientColor, const Eigen::Vector3f &diffuse
 }
 
 Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord) const {
-    return Eigen::Vector3f(1, 1, 1);
+    Eigen::Vector3f light_direction(0.5, 0.5, 0.5);
+    float pc = 10;
+
+    float coeff = -light_direction.dot(hitRecord.normal);
+
+    Eigen::Vector3f ambient = ambientCoeff * ambientColor;
+    Eigen::Vector3f diffuse = diffuseCoeff * coeff * diffuseColor;
+    Eigen::Vector3f specular = specularCoeff * pow(-(rayIn.getDirection().dot(reflect_vector(light_direction, hitRecord.normal))), pc) * specularColor;
+
+    return ambient + diffuse + specular;
 }
