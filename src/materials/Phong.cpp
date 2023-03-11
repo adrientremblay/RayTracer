@@ -15,12 +15,13 @@ Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const
     PointLight light = lights.at(0);
 
     Eigen::Vector3f light_direction = (light.center - hitRecord.point).normalized();
-    Eigen::Vector3f halfway_vector = (light_direction + rayIn.getDirection().normalized()).normalized();
+    Eigen::Vector3f view_direction = rayIn.getDirection().normalized();
+    Eigen::Vector3f halfway_vector = (light_direction + view_direction).normalized();
     float pc = 10;
 
     Eigen::Vector3f ambient = vector_multiply(light.ambientColor,  ambientCoeff * ambientColor);
     Eigen::Vector3f diffuse = vector_multiply(light.diffuseColor, diffuseCoeff * light_direction.dot(hitRecord.normal) * diffuseColor);
-    Eigen::Vector3f specular = specularCoeff * pow(rayIn.getDirection().normalized().dot(reflect_vector(light_direction, hitRecord.normal)), pc) * specularColor;
+    Eigen::Vector3f specular = specularCoeff * pow(view_direction.dot(reflect_vector(light_direction, hitRecord.normal)), pc) * specularColor;
 
      return ambient + diffuse + specular;
 }
