@@ -10,10 +10,12 @@
 #include "Ray.h"
 #include "HittableList.h"
 #include "Sphere.h"
+#include "lights/PointLight.h"
 
 class RayTracer {
 private:
     HittableList world;
+    std::vector<PointLight> lights;
 public:
     RayTracer(nlohmann::json& j);
     void run();

@@ -5,8 +5,10 @@
 #ifndef RAYTRACER_MATERIAL_H
 #define RAYTRACER_MATERIAL_H
 
+#include <vector>
 #include "Hittable.h"
 #include "util.h"
+#include "lights/PointLight.h"
 
 class Material {
 public:
@@ -23,7 +25,7 @@ public:
 
     //virtual bool scatter(const Ray& rayIn, const HitRecord& hitRecord, Eigen::Vector3f& attenuation, Ray& scattered) const = 0;
 
-    virtual Eigen::Vector3f color(const Ray& rayIn, const HitRecord& hitRecord) const = 0;
+    virtual Eigen::Vector3f color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<PointLight>& lights) const = 0;
 };
 
 

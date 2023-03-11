@@ -31,7 +31,6 @@ RayTracer::RayTracer(nlohmann::json& j) {
     if ((it = j.find("geometry")) != j.end()) {
         for (auto& [key, geometry] : (*it).items()) {
             // Material
-
             std::vector<float> ac = *geometry.find("ac");
             Eigen::Vector3f ambient_color = Eigen::Vector3f(ac.at(0), ac.at(1), ac.at(2));
 
@@ -48,7 +47,7 @@ RayTracer::RayTracer(nlohmann::json& j) {
             std::shared_ptr<Phong> geometry_material = std::make_shared<Phong>(ambient_color, diffuse_color, specular_color,
                                                                                ambient_coeff, diffuse_coeff, specular_coeff);
 
-            // type specific stuff
+            // Geometry type specific stuff
             std::string geometry_type = *geometry.find("type");
             if (geometry_type == "sphere") {
                 std::vector<float> centre = *geometry.find("centre");
@@ -57,6 +56,25 @@ RayTracer::RayTracer(nlohmann::json& j) {
                 float sphere_radius = *geometry.find("radius");
 
                 world.add(std::make_shared<Sphere>(centre_vector, sphere_radius, geometry_material));
+            }
+        }
+    }
+
+    if ((it = j.find("light")) != j.end()) {
+        for (auto& [key, light] : (*it).items()) {
+            std::string light_type = *light.find("type");
+            if (light_type == "point") {
+                std::vector<float> centre = *light.find("centre");
+                Eigen::Vector3f light_centre = Eigen::Vector3f(centre.at(0), centre.at(1), centre.at(2));
+
+                std::vector<float> id = *light.find("id");
+                Eigen::Vector3f light_diffuse_color = Eigen::Vector3f(id.at(0), id.at(1), id.at(2));
+
+                std::vector<float> is = *light.find("is");
+                Eigen::Vector3f light_ambient_color = Eigen::Vector3f(is.at(0), is.at(1), is.at(2));
+
+                PointLight point_light(light_centre, light_diffuse_color, light_ambient_color);
+                lights.push_back(point_light);
             }
         }
     }
@@ -112,7 +130,7 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth) {
 
     HitRecord hitRecord;
     if (world.hit(ray, 0.001, infinity, hitRecord)) {
-        return hitRecord.material->color(ray, hitRecord);
+        return hitRecord.material->color(ray, hitRecord, lights);
 
         /*
         Ray scattered;
