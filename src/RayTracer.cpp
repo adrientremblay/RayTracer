@@ -44,8 +44,11 @@ RayTracer::RayTracer(nlohmann::json& j) {
             float diffuse_coeff = *geometry.find("kd");
             float specular_coeff = *geometry.find("ks");
 
+            float phong_coeff = *geometry.find("pc");
+
             std::shared_ptr<Phong> geometry_material = std::make_shared<Phong>(ambient_color, diffuse_color, specular_color,
-                                                                               ambient_coeff, diffuse_coeff, specular_coeff);
+                                                                               ambient_coeff, diffuse_coeff, specular_coeff,
+                                                                               phong_coeff);
 
             // Geometry type specific stuff
             std::string geometry_type = *geometry.find("type");

@@ -19,9 +19,11 @@ public:
     float ambientCoeff;
     float diffuseCoeff;
     float specularCoeff;
+    float phongCoeff;
 
     Material(const Eigen::Vector3f &ambientColor, const Eigen::Vector3f &diffuseColor,
-             const Eigen::Vector3f &specularColor, float ambientCoeff, float diffuseCoeff, float specularCoeff);
+             const Eigen::Vector3f &specularColor, float ambientCoeff, float diffuseCoeff, float specularCoeff,
+             float phongCoeff);
 
     //virtual bool scatter(const Ray& rayIn, const HitRecord& hitRecord, Eigen::Vector3f& attenuation, Ray& scattered) const = 0;
 

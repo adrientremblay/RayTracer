@@ -10,7 +10,7 @@
 class Phong : public Material {
 public:
     Phong(const Eigen::Vector3f &ambientColor, const Eigen::Vector3f &diffuseColor,
-                 const Eigen::Vector3f &specularColor, float ambientCoeff, float diffuseCoeff, float specularCoeff);
+                 const Eigen::Vector3f &specularColor, float ambientCoeff, float diffuseCoeff, float specularCoeff, float phongCoeff);
     virtual Eigen::Vector3f color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<PointLight>& lights) const override;
 };
 
