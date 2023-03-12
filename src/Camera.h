@@ -9,19 +9,19 @@
 #include "Eigen/Dense"
 #include "Ray.h"
 
-const double aspect_ratio = 16.0 / 9.0;
-const double viewport_height = 2.0;
-const double viewport_width = aspect_ratio * viewport_height;
 const double focal_length = 1.0;
 
 class Camera {
-private:
+public:
     Eigen::Vector3f origin;
     Eigen::Vector3f lowerLeftCorner;
     Eigen::Vector3f horizontal;
     Eigen::Vector3f vertical;
-public:
-    Camera();
+    double aspectRatio;
+    double fov;
+    double imageWidth;
+    double imageHeight;
+    Camera(double fov, double imageHeight, double imageWidth);
 
     Ray getRay(double u, double v) const;
 };

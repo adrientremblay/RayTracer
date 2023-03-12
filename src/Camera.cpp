@@ -4,7 +4,15 @@
 
 #include "Camera.h"
 
-Camera::Camera() {
+Camera::Camera(double fov, double imageWidth, double imageHeight): imageWidth(imageWidth), imageHeight(imageHeight) {
+    double theta = degreesToRadians(fov);
+    double h = tan(theta / 2);
+
+    aspectRatio = imageHeight / imageWidth;
+
+    auto viewport_height = 2.0 * h;
+    auto viewport_width = aspectRatio * viewport_height;
+
     origin = Eigen::Vector3f(0, 0, 0);
     horizontal = Eigen::Vector3f(viewport_width, 0, 0);
     vertical = Eigen::Vector3f(0, viewport_height, 0);
