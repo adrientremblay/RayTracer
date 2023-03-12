@@ -96,49 +96,55 @@ RayTracer::RayTracer(nlohmann::json& j) {
             }
         }
     }
+
+    if ((it = j.find("output")) != j.end()) {
+        for (auto& [key, output] : (*it).items()) {
+            cameras.push_back(Camera());
+        }
+    }
 }
 
 void RayTracer::run() {
-    // Image
-    const int image_width = 400; // px
-    const int image_height = static_cast<int>(image_width / aspect_ratio); // px
-    const int samples_per_pixel = 20; // turn this up for good renders
-    const double pp_scale = 1.0 / samples_per_pixel;
-    const double max_depth = 20;
+    int render_number = 1;
+    for (Camera camera : cameras)  {
+        // Image
+        const int image_width = 400; // px
+        const int image_height = static_cast<int>(image_width / aspect_ratio); // px
+        const int samples_per_pixel = 20; // turn this up for good renders
+        const double pp_scale = 1.0 / samples_per_pixel;
+        const double max_depth = 20;
 
-    // Camera
-    Camera camera;
+        // Render
+        std::vector<double> buffer(3*image_width*image_height);
+        for (int j = 0 ; j < image_height ; j++) {
+            std::cerr << "\rScanlines remaining: " << image_height - j << std::flush;
+            for (int i = 0 ; i < image_width ; i++){
+                Eigen::Vector3f pixel_color(0, 0, 0);
 
-    // Render
-    std::vector<double> buffer(3*image_width*image_height);
-    for (int j = 0 ; j < image_height ; j++) {
-        std::cerr << "\rScanlines remaining: " << image_height - j << std::flush;
-        for (int i = 0 ; i < image_width ; i++){
-            Eigen::Vector3f pixel_color(0, 0, 0);
+                for (int s = 1 ; s <= samples_per_pixel ; s++) {
+                    double u = double(i + random_double())  / (image_width-1);
+                    double v = double(j + random_double())  / (image_height-1);
+                    Ray ray = camera.getRay(u, v);
+                    pixel_color += rayColor(ray, max_depth);
+                }
 
-            for (int s = 1 ; s <= samples_per_pixel ; s++) {
-                double u = double(i + random_double())  / (image_width-1);
-                double v = double(j + random_double())  / (image_height-1);
-                Ray ray = camera.getRay(u, v);
-                pixel_color += rayColor(ray, max_depth);
+                // scale and gamma correct and clamp
+                const double r = clamp(sqrt(pixel_color.x() * pp_scale), 0.0, 0.999);
+                const double g = clamp(sqrt(pixel_color.y() * pp_scale), 0.0, 0.999);
+                const double b = clamp(sqrt(pixel_color.z() * pp_scale), 0.0, 0.999);
+
+                const int row = 3 * (image_height - j - 1) * image_width;
+                const int col = 3 * i;
+                const int cell = row + col;
+                buffer[cell + 0] = r;
+                buffer[cell + 1] = g;
+                buffer[cell + 2] = b;
             }
-
-            // scale and gamma correct and clamp
-            const double r = clamp(sqrt(pixel_color.x() * pp_scale), 0.0, 0.999);
-            const double g = clamp(sqrt(pixel_color.y() * pp_scale), 0.0, 0.999);
-            const double b = clamp(sqrt(pixel_color.z() * pp_scale), 0.0, 0.999);
-
-            const int row = 3 * (image_height - j - 1) * image_width;
-            const int col = 3 * i;
-            const int cell = row + col;
-            buffer[cell + 0] = r;
-            buffer[cell + 1] = g;
-            buffer[cell + 2] = b;
         }
-    }
-    std::cerr << "\nDone.\n";
+        std::cerr << "\nDone.\n";
 
-    save_ppm("adrien.ppm", buffer, image_width, image_height);
+        save_ppm(std::to_string(render_number++) + ".ppm", buffer, image_width, image_height);
+    }
 }
 
 Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth) {
