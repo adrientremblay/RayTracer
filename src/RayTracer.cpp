@@ -142,7 +142,7 @@ void RayTracer::run() {
                     double u = double(i + random_double())  / (camera.imageWidth-1);
                     double v = double(j + random_double())  / (camera.imageHeight-1);
                     Ray ray = camera.getRay(u, v);
-                    pixel_color += rayColor(ray, max_depth);
+                    pixel_color += rayColor(ray, max_depth, camera);
                 }
 
                 // scale and gamma correct and clamp
@@ -164,7 +164,7 @@ void RayTracer::run() {
     }
 }
 
-Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth) {
+Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth, const Camera& camera) {
     if (depth <= 0)
         return Eigen::Vector3f(0, 0, 0);
 
@@ -183,8 +183,5 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth) {
         */
     }
 
-    // Background Color
-    Eigen::Vector3f unit_direction = ray.getDirection().normalized();
-    double blueness = 0.5 * (unit_direction.y() + 1.0);
-    return (1.0 - blueness) * Eigen::Vector3f(1.0, 1.0, 1.0) + blueness * Eigen::Vector3f(0.5, 0.7, 1.0);
+    return camera.bkc;
 }

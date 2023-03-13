@@ -22,7 +22,7 @@ public:
     RayTracer(nlohmann::json& j);
     void run();
 private:
-    Eigen::Vector3f rayColor(const Ray& ray, int depth);
+    Eigen::Vector3f rayColor(const Ray& ray, int depth, const Camera& camera);
 };
 
 
