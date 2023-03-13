@@ -55,10 +55,10 @@
     "output":[{
         "filename":"test_area_light1.ppm",
         "size":[500,500],
-        "lookat":[0,0,-1],
+        "lookat":[-0.25,0,-1],
         "up":[0,1,0],
         "fov":60,
-        "centre":[2,2.5,0],
+        "centre":[0,0,0],
         "ai":[1,1,1],
         "bkc":[0.5,0.5,0.5],
 

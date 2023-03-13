@@ -5,7 +5,7 @@
 #include "Camera.h"
 
 Camera::Camera(double fov, double imageHeight, double imageWidth, Eigen::Vector3f lookat, Eigen::Vector3f up, Eigen::Vector3f centre, Eigen::Vector3f ai, Eigen::Vector3f bkc) :
-fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat), up(up), centre(centre), ai(ai), bkc(bkc) {
+fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normalized()), up(up.normalized()), centre(centre), ai(ai), bkc(bkc) {
     double theta = degreesToRadians(fov);
     double h = tan(theta / 2);
 
@@ -14,9 +14,13 @@ fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat), up(u
     auto viewport_height = 2.0 * h;
     auto viewport_width = aspectRatio * viewport_height;
 
-    horizontal = Eigen::Vector3f(viewport_width, 0, 0);
-    vertical = Eigen::Vector3f(0, viewport_height, 0);
-    lowerLeftCorner = centre - horizontal / 2 - vertical / 2 - Eigen::Vector3f(0, 0, focal_length);
+    Eigen::Vector3f w = (centre - lookat).normalized();
+    Eigen::Vector3f u = (up.cross(w)).normalized();
+    Eigen::Vector3f v = w.cross(u);
+
+    horizontal = viewport_width * u;
+    vertical = viewport_height * v;
+    lowerLeftCorner = centre - horizontal / 2 - vertical / 2 - (focal_length * w);
 }
 
 Ray Camera::getRay(double u, double v) const {
