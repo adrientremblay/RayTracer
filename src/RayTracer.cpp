@@ -102,7 +102,22 @@ RayTracer::RayTracer(nlohmann::json& j) {
             double fov = *output.find("fov");
             std::vector<double> size = *output.find("size");
 
-            cameras.push_back(Camera(fov, size.at(0), size.at(1)));
+            std::vector<double> lookat = *output.find("lookat");
+            Eigen::Vector3f lookat_vec(lookat.at(0), lookat.at(1), lookat.at(2));
+
+            std::vector<double> up = *output.find("up");
+            Eigen::Vector3f up_vec(up.at(0), up.at(1), up.at(2));
+
+            std::vector<double> centre = *output.find("centre");
+            Eigen::Vector3f centre_vec(centre.at(0), centre.at(1), centre.at(2));
+
+            std::vector<double> ai = *output.find("ai");
+            Eigen::Vector3f ai_vec(ai.at(0), ai.at(1), ai.at(2));
+
+            std::vector<double> bkc = *output.find("bkc");
+            Eigen::Vector3f bkc_vec(bkc.at(0), bkc.at(1), bkc.at(2));
+
+            cameras.push_back(Camera(fov, size.at(0), size.at(1), lookat_vec, up_vec, centre_vec, ai_vec, bkc_vec));
         }
     }
 }
