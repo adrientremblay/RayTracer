@@ -6,12 +6,11 @@
 #define RAYTRACER_POINTLIGHT_H
 
 #include "Eigen/Dense"
+#include "Light.h"
 
-class PointLight {
+class PointLight : public Light {
 public:
     Eigen::Vector3f center;
-    Eigen::Vector3f diffuseColor;
-    Eigen::Vector3f ambientColor;
 
     PointLight(Eigen::Vector3f center, Eigen::Vector3f diffuseColor, Eigen::Vector3f ambientColor);
 };
