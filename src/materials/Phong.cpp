@@ -17,9 +17,8 @@ Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const
 
         // Shadow ray
         HitRecord shadowHitRecord;
-        if (world.hit(Ray(hitRecord.point + (shadowAcneBias * hitRecord.normal), light_direction), 0.001, infinity, shadowHitRecord))  {
+        if (world.hit(Ray(hitRecord.point + (shadowAcneBias * hitRecord.normal), light_direction), 0.001, (hitRecord.point + (shadowAcneBias * hitRecord.normal) - light_ptr->getPosition()).norm(), shadowHitRecord))
             continue;
-        }
 
         // Shading
         Eigen::Vector3f view_direction = -rayIn.getDirection().normalized();

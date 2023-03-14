@@ -17,6 +17,7 @@ public:
     Light(Eigen::Vector3f diffuseColor, Eigen::Vector3f specularColor);
 
     virtual Eigen::Vector3f getDirection(const HitRecord& hitRecord) const = 0;
+    virtual Eigen::Vector3f getPosition() const = 0;
 };
 
 #endif //RAYTRACER_LIGHT_H

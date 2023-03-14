@@ -9,3 +9,7 @@ PointLight::PointLight(Eigen::Vector3f center, Eigen::Vector3f diffuseColor, Eig
 Eigen::Vector3f PointLight::getDirection(const HitRecord& hitRecord) const {
     return (center - hitRecord.point).normalized();
 }
+
+Eigen::Vector3f PointLight::getPosition() const {
+   return center;
+}

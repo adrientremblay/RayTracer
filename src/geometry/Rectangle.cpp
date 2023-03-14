@@ -30,10 +30,12 @@ bool Rectangle::hit(const Ray& ray, double tMin, double tMax, HitRecord& hitReco
     if (!(alpha >= 0 && alpha <= 1 && beta >= 0 && beta <= 1))
         return false;
 
+    if (t < tMin || t > tMax)
+        return false;
+
     hitRecord.t = t;
     hitRecord.point = ray.at(hitRecord.t);
-    Eigen::Vector3f outwardNormal = normal;
-    hitRecord.setFaceNormal(ray, outwardNormal);
+    hitRecord.setFaceNormal(ray, normal);
     hitRecord.material = material;
 
     return true;

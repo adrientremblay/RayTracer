@@ -21,6 +21,7 @@ public:
               bool useCenter);
 
     virtual Eigen::Vector3f getDirection(const HitRecord& hitRecord) const override;
+    virtual Eigen::Vector3f getPosition() const override;
 };
 
 

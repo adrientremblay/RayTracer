@@ -18,3 +18,7 @@ bool useCenter) : Light(diffuseColor, specularColor), p1(p1), p2(p2), p3(p3), p4
 Eigen::Vector3f AreaLight::getDirection(const HitRecord& hitRecord) const {
     return (center - hitRecord.point).normalized();
 }
+
+Eigen::Vector3f AreaLight::getPosition() const {
+    return center;
+}

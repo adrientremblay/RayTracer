@@ -135,13 +135,14 @@ RayTracer::RayTracer(nlohmann::json& j) {
             std::vector<double> bkc = *output.find("bkc");
             Eigen::Vector3f bkc_vec(bkc.at(0), bkc.at(1), bkc.at(2));
 
-            cameras.push_back(Camera(fov, size.at(0), size.at(1), lookat_vec, up_vec, centre_vec, ai_vec, bkc_vec));
+            std::string filename = *output.find("filename");
+
+            cameras.push_back(Camera(fov, size.at(0), size.at(1), lookat_vec, up_vec, centre_vec, ai_vec, bkc_vec, filename));
         }
     }
 }
 
 void RayTracer::run() {
-    int render_number = 1;
     for (Camera camera : cameras)  {
         // Image
         const int samples_per_pixel = 20; // turn this up for good renders
@@ -182,8 +183,7 @@ void RayTracer::run() {
             delete light;
         }
 
-
-        save_ppm(std::to_string(render_number++) + ".ppm", buffer, camera.imageWidth, camera.imageHeight);
+        save_ppm(camera.filename, buffer, camera.imageWidth, camera.imageHeight);
     }
 }
 
