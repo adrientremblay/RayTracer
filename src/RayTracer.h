@@ -16,7 +16,7 @@
 class RayTracer {
 private:
     HittableList world;
-    std::vector<PointLight> lights;
+    std::vector<Light*> lights;
     std::vector<Camera> cameras;
 public:
     RayTracer(nlohmann::json& j);

@@ -91,8 +91,8 @@ RayTracer::RayTracer(nlohmann::json& j) {
                 std::vector<float> is = *light.find("is");
                 Eigen::Vector3f light_ambient_color = Eigen::Vector3f(is.at(0), is.at(1), is.at(2));
 
-                PointLight point_light(light_centre, light_diffuse_color, light_ambient_color);
-                lights.push_back(point_light);
+                PointLight* point_light_ptr = new PointLight(light_centre, light_diffuse_color, light_ambient_color);
+                lights.push_back(point_light_ptr);
             }
         }
     }
@@ -126,7 +126,6 @@ void RayTracer::run() {
     int render_number = 1;
     for (Camera camera : cameras)  {
         // Image
-
         const int samples_per_pixel = 20; // turn this up for good renders
         const double pp_scale = 1.0 / samples_per_pixel;
         const double max_depth = 20;
@@ -159,6 +158,12 @@ void RayTracer::run() {
             }
         }
         std::cerr << "\nDone.\n";
+
+        std::cerr << "\nCleaning Up...\n";
+        for (auto light : lights) {
+            delete light;
+        }
+
 
         save_ppm(std::to_string(render_number++) + ".ppm", buffer, camera.imageWidth, camera.imageHeight);
     }

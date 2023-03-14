@@ -13,6 +13,8 @@ public:
     Eigen::Vector3f center;
 
     PointLight(Eigen::Vector3f center, Eigen::Vector3f diffuseColor, Eigen::Vector3f ambientColor);
+
+    virtual Eigen::Vector3f getDirection(const HitRecord& hitRecord) const override;
 };
 
 

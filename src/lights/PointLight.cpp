@@ -5,3 +5,7 @@
 #include "PointLight.h"
 
 PointLight::PointLight(Eigen::Vector3f center, Eigen::Vector3f diffuseColor, Eigen::Vector3f ambientColor) : center(center), Light(diffuseColor, ambientColor) {}
+
+Eigen::Vector3f PointLight::getDirection(const HitRecord& hitRecord) const {
+    return (center - hitRecord.point).normalized();
+}
