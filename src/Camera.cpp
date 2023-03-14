@@ -14,7 +14,7 @@ fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normal
     auto viewport_height = 2.0 * h;
     auto viewport_width = aspectRatio * viewport_height;
 
-    Eigen::Vector3f w = (centre - lookat).normalized();
+    Eigen::Vector3f w = -lookat.normalized();
     Eigen::Vector3f u = (up.cross(w)).normalized();
     Eigen::Vector3f v = w.cross(u);
 
