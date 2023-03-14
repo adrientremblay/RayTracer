@@ -1,1 +1,2 @@
 - Actually implement the Area lights instead of using a directional light
+- Is is really specularColor or not??? The name is fucked up

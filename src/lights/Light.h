@@ -12,9 +12,9 @@
 class Light {
 public:
     Eigen::Vector3f diffuseColor;
-    Eigen::Vector3f ambientColor;
+    Eigen::Vector3f specularColor;
 
-    Light(Eigen::Vector3f diffuseColor, Eigen::Vector3f ambientColor);
+    Light(Eigen::Vector3f diffuseColor, Eigen::Vector3f specularColor);
 
     virtual Eigen::Vector3f getDirection(const HitRecord& hitRecord) const = 0;
 };

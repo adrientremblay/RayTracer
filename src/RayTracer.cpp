@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "materials/Phong.h"
 #include "geometry/Rectangle.h"
+#include "lights/AreaLight.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
     /*
@@ -80,19 +81,36 @@ RayTracer::RayTracer(nlohmann::json& j) {
 
     if ((it = j.find("light")) != j.end()) {
         for (auto& [key, light] : (*it).items()) {
+            std::vector<float> id = *light.find("id");
+            Eigen::Vector3f light_diffuse_color = Eigen::Vector3f(id.at(0), id.at(1), id.at(2));
+
+            std::vector<float> is = *light.find("is");
+            Eigen::Vector3f light_specular_color = Eigen::Vector3f(is.at(0), is.at(1), is.at(2));
+
             std::string light_type = *light.find("type");
             if (light_type == "point") {
                 std::vector<float> centre = *light.find("centre");
                 Eigen::Vector3f light_centre = Eigen::Vector3f(centre.at(0), centre.at(1), centre.at(2));
 
-                std::vector<float> id = *light.find("id");
-                Eigen::Vector3f light_diffuse_color = Eigen::Vector3f(id.at(0), id.at(1), id.at(2));
-
-                std::vector<float> is = *light.find("is");
-                Eigen::Vector3f light_ambient_color = Eigen::Vector3f(is.at(0), is.at(1), is.at(2));
-
-                PointLight* point_light_ptr = new PointLight(light_centre, light_diffuse_color, light_ambient_color);
+                PointLight* point_light_ptr = new PointLight(light_centre, light_diffuse_color, light_specular_color);
                 lights.push_back(point_light_ptr);
+            } else if (light_type == "area") {
+                std::vector<float> p1 = *light.find("p1");
+                Eigen::Vector3f point_1 = Eigen::Vector3f(p1.at(0), p1.at(1), p1.at(2));
+
+                std::vector<float> p2 = *light.find("p2");
+                Eigen::Vector3f point_2 = Eigen::Vector3f(p2.at(0), p2.at(1), p2.at(2));
+
+                std::vector<float> p3 = *light.find("p3");
+                Eigen::Vector3f point_3 = Eigen::Vector3f(p3.at(0), p3.at(1), p3.at(2));
+
+                std::vector<float> p4 = *light.find("p4");
+                Eigen::Vector3f point_4 = Eigen::Vector3f(p4.at(0), p4.at(1), p4.at(2));
+
+                bool use_center = *light.find("usecenter");
+
+                AreaLight* area_light_ptr = new AreaLight(light_diffuse_color, light_specular_color, point_1, point_2, point_3, point_4, use_center);
+                //lights.push_back(area_light_ptr);
             }
         }
     }

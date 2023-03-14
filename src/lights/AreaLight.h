@@ -14,8 +14,9 @@ public:
     Eigen::Vector3f p3;
     Eigen::Vector3f p4;
     bool useCenter;
+    Eigen::Vector3f normal;
 
-    AreaLight(Eigen::Vector3f diffuseColor, Eigen::Vector3f ambientColor, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, Eigen::Vector3f p4,
+    AreaLight(Eigen::Vector3f diffuseColor, Eigen::Vector3f specularColor, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, Eigen::Vector3f p4,
               bool useCenter);
 
     virtual Eigen::Vector3f getDirection(const HitRecord& hitRecord) const override;

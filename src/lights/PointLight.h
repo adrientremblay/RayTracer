@@ -12,7 +12,7 @@ class PointLight : public Light {
 public:
     Eigen::Vector3f center;
 
-    PointLight(Eigen::Vector3f center, Eigen::Vector3f diffuseColor, Eigen::Vector3f ambientColor);
+    PointLight(Eigen::Vector3f center, Eigen::Vector3f diffuseColor, Eigen::Vector3f specularColor);
 
     virtual Eigen::Vector3f getDirection(const HitRecord& hitRecord) const override;
 };
