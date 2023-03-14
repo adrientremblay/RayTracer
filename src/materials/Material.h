@@ -9,6 +9,7 @@
 #include "geometry/Hittable.h"
 #include "util.h"
 #include "lights/PointLight.h"
+#include "HittableList.h"
 
 class Material {
 public:
@@ -25,9 +26,7 @@ public:
              const Eigen::Vector3f &specularColor, float ambientCoeff, float diffuseCoeff, float specularCoeff,
              float phongCoeff);
 
-    //virtual bool scatter(const Ray& rayIn, const HitRecord& hitRecord, Eigen::Vector3f& attenuation, Ray& scattered) const = 0;
-
-    virtual Eigen::Vector3f color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<Light*>& lights) const = 0;
+    virtual Eigen::Vector3f color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<Light*>& lights, const HittableList& world) const = 0;
 };
 
 

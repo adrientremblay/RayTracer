@@ -193,7 +193,7 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth, const Camera& cam
 
     HitRecord hitRecord;
     if (world.hit(ray, 0.001, infinity, hitRecord)) {
-        return hitRecord.material->color(ray, hitRecord, lights);
+        return hitRecord.material->color(ray, hitRecord, lights, world);
 
         /*
         Ray scattered;

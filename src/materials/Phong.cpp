@@ -9,11 +9,19 @@ Phong::Phong(const Eigen::Vector3f &ambientColor, const Eigen::Vector3f &diffuse
                    const Eigen::Vector3f &specularColor, float ambientCoeff, float diffuseCoeff, float specularCoeff, float phongCoeff) : Material(ambientColor, diffuseColor, specularColor, ambientCoeff, diffuseCoeff, specularCoeff, phongCoeff) {
 }
 
-Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<Light*>& lights) const {
+Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<Light*>& lights, const HittableList& world) const {
     Eigen::Vector3f ret(0, 0, 0);
 
     for (Light* light_ptr : lights) {
         Eigen::Vector3f light_direction = light_ptr->getDirection(hitRecord);
+
+        // Shadow ray
+        HitRecord shadowHitRecord;
+        if (world.hit(Ray(hitRecord.point + (shadowAcneBias * hitRecord.normal), light_direction), 0.001, infinity, shadowHitRecord))  {
+            continue;
+        }
+
+        // Shading
         Eigen::Vector3f view_direction = -rayIn.getDirection().normalized();
         Eigen::Vector3f halfway_vector = (light_direction + view_direction).normalized();
 
