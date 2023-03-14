@@ -10,17 +10,20 @@ Phong::Phong(const Eigen::Vector3f &ambientColor, const Eigen::Vector3f &diffuse
 }
 
 Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<PointLight>& lights) const {
-    // todo: get lights properly
-    PointLight light = lights.at(0);
+    Eigen::Vector3f ret(0, 0, 0);
 
-    Eigen::Vector3f light_direction = (light.center - hitRecord.point).normalized();
-    Eigen::Vector3f view_direction = -rayIn.getDirection().normalized();
-    Eigen::Vector3f halfway_vector = (light_direction + view_direction).normalized();
+    for (PointLight light : lights) {
+        Eigen::Vector3f light_direction = (light.center - hitRecord.point).normalized();
+        Eigen::Vector3f view_direction = -rayIn.getDirection().normalized();
+        Eigen::Vector3f halfway_vector = (light_direction + view_direction).normalized();
 
-    Eigen::Vector3f ambient = vector_multiply(light.ambientColor,  ambientCoeff * ambientColor);
-    Eigen::Vector3f diffuse = vector_multiply(light.diffuseColor, diffuseCoeff * light_direction.dot(hitRecord.normal) * diffuseColor);
-    Eigen::Vector3f specular = specularCoeff * pow(std::max(hitRecord.normal.dot(halfway_vector), 0.0f), phongCoeff) * specularColor;
-    //Eigen::Vector3f specular = specularCoeff * std::pow((reflect_vector(-light_direction, hitRecord.normal)).dot(view_direction), phongCoeff) * specularColor;
+        Eigen::Vector3f ambient = vector_multiply(light.ambientColor,  ambientCoeff * ambientColor);
+        Eigen::Vector3f diffuse = vector_multiply(light.diffuseColor, diffuseCoeff * light_direction.dot(hitRecord.normal) * diffuseColor);
+        Eigen::Vector3f specular = specularCoeff * pow(std::max(hitRecord.normal.dot(halfway_vector), 0.0f), phongCoeff) * specularColor;
+        //Eigen::Vector3f specular = specularCoeff * std::pow((reflect_vector(-light_direction, hitRecord.normal)).dot(view_direction), phongCoeff) * specularColor;
 
-    return ambient + diffuse + specular;
+        ret += ambient + diffuse + specular;
+    }
+
+    return ret;
 }
