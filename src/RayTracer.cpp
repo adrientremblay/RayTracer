@@ -110,7 +110,7 @@ RayTracer::RayTracer(nlohmann::json& j) {
                 bool use_center = *light.find("usecenter");
 
                 AreaLight* area_light_ptr = new AreaLight(light_diffuse_color, light_specular_color, point_1, point_2, point_3, point_4, use_center);
-                //lights.push_back(area_light_ptr);
+                lights.push_back(area_light_ptr);
             }
         }
     }
