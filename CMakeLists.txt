@@ -50,9 +50,7 @@ include_directories(src/)
 include_directories(external/)
 
 #internal includes
-aux_source_directory(external SOURCE)
-aux_source_directory(src SOURCE)
+file(GLOB_RECURSE SOURCE "src/*.cpp" "external/*.cpp")
 
-message(sources ${SOURCE})
 add_executable(raytracer main.cpp ${SOURCE}) #The name of the cpp file and its path can vary
 

@@ -12,7 +12,7 @@
 #include "Camera.h"
 #include "Phong.h"
 #include "Rectangle.h"
-#include "AreaLight.h"
+#include "lights/swag/AreaLight.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
     /*
