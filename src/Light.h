@@ -7,7 +7,7 @@
 
 #include "Eigen/Dense"
 #include "Camera.h"
-#include "geometry/Hittable.h"
+#include "Hittable.h"
 
 class Light {
 public:

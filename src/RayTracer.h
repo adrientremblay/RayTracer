@@ -9,8 +9,8 @@
 #include "Eigen/Dense"
 #include "Ray.h"
 #include "HittableList.h"
-#include "geometry/Sphere.h"
-#include "lights/PointLight.h"
+#include "Sphere.h"
+#include "PointLight.h"
 #include "Camera.h"
 
 class RayTracer {

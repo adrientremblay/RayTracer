@@ -7,12 +7,12 @@
 #include "simpleppm.h"
 #include <Eigen/Dense>
 #include <memory>
-#include "geometry/Sphere.h"
+#include "Sphere.h"
 #include "util.h"
 #include "Camera.h"
-#include "materials/Phong.h"
-#include "geometry/Rectangle.h"
-#include "lights/AreaLight.h"
+#include "Phong.h"
+#include "Rectangle.h"
+#include "AreaLight.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
     /*
