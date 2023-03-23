@@ -1,36 +1,44 @@
 {
     "geometry":[{
         "type":"sphere",
-        "centre":[0, 0, -4],
+        "centre":[2, 0, -6],
         "radius":2,
 
         "ac":[0,1,0],
-        "dc":[1,0,0],
+        "dc":[0,0,1],
         "sc":[1,1,1],
 
-        "ka":1,
+        "ka":0,
         "kd":1,
         "ks":1,
 
-        "pc":10
+        "pc":100
     }
     ],
     "light":[{
         "type":"point",
         "centre":[0, 0, 0],
-        "id":[1, 1, 1],
+        "id":[0.5, 0.5, 0.5],
         "is":[1, 1, 1]
 
-    }],
+    },
+        {
+            "type":"point",
+            "centre":[2, 4, 0],
+            "id":[0.5, 0.5, 0.5],
+            "is":[1, 1, 1]
+
+        }
+    ],
     "output":[{
-        "filename":"test_scene1.ppm",
-        "size":[500,500],
+        "filename":"test_scene1B.ppm",
+        "size":[1000,500],
         "lookat":[0,0,-1],
         "up":[0,1,0],
-        "fov":90,
+        "fov":60,
         "centre":[0,0,0],
         "ai":[1,1,1],
-        "bkc":[1,1,1]
+        "bkc":[0.4,0.4,0.4]
     }
     ]
 }
