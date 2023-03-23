@@ -15,20 +15,7 @@
 #include "AreaLight.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
-    /*
-    std::shared_ptr<Lambertian> material_ground = std::make_shared<Lambertian>(Eigen::Vector3f(0.8, 0.8, 0.0));
-    std::shared_ptr<Lambertian> material_center = std::make_shared<Lambertian>(Eigen::Vector3f(0.7, 0.3, 0.3));
-    std::shared_ptr<Metal> material_left = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.8, 0.8), 0.3);
-    std::shared_ptr<Metal> material_right = std::make_shared<Metal>(Eigen::Vector3f(0.8, 0.6, 0.2), 1.0);
-     */
-
-    /*
-    world.add(std::make_shared<Sphere>(Eigen::Vector3f(0,-100.5,-1), 100,  material_ground));
-    world.add(std::make_shared<Sphere>(Eigen::Vector3f(0, 0, -1), 0.5, material_center));
-    world.add(std::make_shared<Sphere>(Eigen::Vector3f(-1.0, 0, -1), 0.5, material_left));
-    world.add(std::make_shared<Sphere>(Eigen::Vector3f(1.0, 0, -1), 0.5, material_right));
-     */
-
+    // Parsing geometry section
     nlohmann::json::iterator it;
     if ((it = j.find("geometry")) != j.end()) {
         for (auto& geometry: (*it).items()) {
@@ -80,34 +67,34 @@ RayTracer::RayTracer(nlohmann::json& j) {
     }
 
     if ((it = j.find("light")) != j.end()) {
-        for (auto& [key, light] : (*it).items()) {
-            std::vector<float> id = *light.find("id");
+        for (auto& light: (*it).items()) {
+            std::vector<float> id = *light.value().find("id");
             Eigen::Vector3f light_diffuse_color = Eigen::Vector3f(id.at(0), id.at(1), id.at(2));
 
-            std::vector<float> is = *light.find("is");
+            std::vector<float> is = *light.value().find("is");
             Eigen::Vector3f light_specular_color = Eigen::Vector3f(is.at(0), is.at(1), is.at(2));
 
-            std::string light_type = *light.find("type");
+            std::string light_type = *light.value().find("type");
             if (light_type == "point") {
-                std::vector<float> centre = *light.find("centre");
+                std::vector<float> centre = *light.value().find("centre");
                 Eigen::Vector3f light_centre = Eigen::Vector3f(centre.at(0), centre.at(1), centre.at(2));
 
                 PointLight* point_light_ptr = new PointLight(light_centre, light_diffuse_color, light_specular_color);
                 lights.push_back(point_light_ptr);
             } else if (light_type == "area") {
-                std::vector<float> p1 = *light.find("p1");
+                std::vector<float> p1 = *light.value().find("p1");
                 Eigen::Vector3f point_1 = Eigen::Vector3f(p1.at(0), p1.at(1), p1.at(2));
 
-                std::vector<float> p2 = *light.find("p2");
+                std::vector<float> p2 = *light.value().find("p2");
                 Eigen::Vector3f point_2 = Eigen::Vector3f(p2.at(0), p2.at(1), p2.at(2));
 
-                std::vector<float> p3 = *light.find("p3");
+                std::vector<float> p3 = *light.value().find("p3");
                 Eigen::Vector3f point_3 = Eigen::Vector3f(p3.at(0), p3.at(1), p3.at(2));
 
-                std::vector<float> p4 = *light.find("p4");
+                std::vector<float> p4 = *light.value().find("p4");
                 Eigen::Vector3f point_4 = Eigen::Vector3f(p4.at(0), p4.at(1), p4.at(2));
 
-                bool use_center = *light.find("usecenter");
+                bool use_center = *light.value().find("usecenter");
 
                 AreaLight* area_light_ptr = new AreaLight(light_diffuse_color, light_specular_color, point_1, point_2, point_3, point_4, use_center);
                 lights.push_back(area_light_ptr);
@@ -116,26 +103,26 @@ RayTracer::RayTracer(nlohmann::json& j) {
     }
 
     if ((it = j.find("output")) != j.end()) {
-        for (auto& [key, output] : (*it).items()) {
-            double fov = *output.find("fov");
-            std::vector<double> size = *output.find("size");
+        for (auto& output : (*it).items()) {
+            double fov = *output.value().find("fov");
+            std::vector<double> size = *output.value().find("size");
 
-            std::vector<double> lookat = *output.find("lookat");
+            std::vector<double> lookat = *output.value().find("lookat");
             Eigen::Vector3f lookat_vec(lookat.at(0), lookat.at(1), lookat.at(2));
 
-            std::vector<double> up = *output.find("up");
+            std::vector<double> up = *output.value().find("up");
             Eigen::Vector3f up_vec(up.at(0), up.at(1), up.at(2));
 
-            std::vector<double> centre = *output.find("centre");
+            std::vector<double> centre = *output.value().find("centre");
             Eigen::Vector3f centre_vec(centre.at(0), centre.at(1), centre.at(2));
 
-            std::vector<double> ai = *output.find("ai");
+            std::vector<double> ai = *output.value().find("ai");
             Eigen::Vector3f ai_vec(ai.at(0), ai.at(1), ai.at(2));
 
-            std::vector<double> bkc = *output.find("bkc");
+            std::vector<double> bkc = *output.value().find("bkc");
             Eigen::Vector3f bkc_vec(bkc.at(0), bkc.at(1), bkc.at(2));
 
-            std::string filename = *output.find("filename");
+            std::string filename = *output.value().find("filename");
 
             cameras.push_back(Camera(fov, size.at(0), size.at(1), lookat_vec, up_vec, centre_vec, ai_vec, bkc_vec, filename));
         }
