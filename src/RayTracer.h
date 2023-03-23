@@ -13,6 +13,8 @@
 #include "PointLight.h"
 #include "Camera.h"
 
+#define GAMMA_CORRECTION_ENABLED false
+
 class RayTracer {
 private:
     HittableList world;
@@ -23,6 +25,7 @@ public:
     void run();
 private:
     Eigen::Vector3f rayColor(const Ray& ray, int depth, const Camera& camera);
+    static inline float gammaCorrect(float color);
 };
 
 

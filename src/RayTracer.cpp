@@ -174,9 +174,9 @@ void RayTracer::run() {
                 }
 
                 // scale and gamma correct and clamp
-                const double r = clamp(sqrt(pixel_color.x() * pp_scale), 0.0, 0.999);
-                const double g = clamp(sqrt(pixel_color.y() * pp_scale), 0.0, 0.999);
-                const double b = clamp(sqrt(pixel_color.z() * pp_scale), 0.0, 0.999);
+                const double r = clamp(gammaCorrect(pixel_color.x() * pp_scale), 0.0, 0.999);
+                const double g = clamp(gammaCorrect(pixel_color.y() * pp_scale), 0.0, 0.999);
+                const double b = clamp(gammaCorrect(pixel_color.z() * pp_scale), 0.0, 0.999);
 
                 const int row = 3 * (camera.imageHeight - j - 1) * camera.imageWidth;
                 const int col = 3 * i;
@@ -217,4 +217,12 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth, const Camera& cam
     }
 
     return camera.bkc;
+}
+
+inline float RayTracer::gammaCorrect(float color) {
+# if GAMMA_CORRECTION_ENABLED
+    return sqrt(color);
+# else
+    return color;
+# endif
 }
