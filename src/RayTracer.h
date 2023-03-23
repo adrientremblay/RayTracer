@@ -28,5 +28,4 @@ private:
     static inline float gammaCorrect(float color);
 };
 
-
 #endif //RAYTRACER_RAYTRACER_H

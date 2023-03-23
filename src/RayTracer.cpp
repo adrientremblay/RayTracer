@@ -131,12 +131,6 @@ RayTracer::RayTracer(nlohmann::json& j) {
                 globalIllumination = *globalIllumIter;
             }
 
-            std::vector<int> raysPerPixel = {1};
-            nlohmann::json::iterator raysPerPixelIter = output.value().find("raysperpixel");
-            if (raysPerPixelIter != output.value().end()) {
-                raysPerPixel = raysPerPixelIter->get<std::vector<int>>();
-            }
-
             int maxBounces = 1;
             nlohmann::json::iterator maxBouncesIter = output.value().find("maxbounces");
             if (maxBouncesIter != output.value().end()) {
@@ -149,7 +143,25 @@ RayTracer::RayTracer(nlohmann::json& j) {
                 probTerminate = *probTerminateIter;
             }
 
-            cameras.push_back(Camera(fov, size.at(0), size.at(1), lookat_vec, up_vec, centre_vec, ai_vec, bkc_vec, filename, globalIllumination, raysPerPixel, maxBounces, probTerminate));
+            bool antiAliasing = false;
+            nlohmann::json::iterator antiAliasingIter = output.value().find("antialiasing");
+            if (antiAliasingIter != output.value().end()) {
+                antiAliasing = *antiAliasingIter;
+            }
+
+            std::vector<int> raysPerPixel = {1};
+            nlohmann::json::iterator raysPerPixelIter = output.value().find("raysperpixel");
+            if ((antiAliasing || globalIllumination) && raysPerPixelIter != output.value().end()) {
+                raysPerPixel = raysPerPixelIter->get<std::vector<int>>();
+            }
+
+            bool twoSideRender = true;
+            nlohmann::json::iterator twoSideRenderIter = output.value().find("antialiasing");
+            if (twoSideRenderIter != output.value().end()) {
+                twoSideRender = *antiAliasingIter;
+            }
+
+            cameras.push_back(Camera(fov, size.at(0), size.at(1), lookat_vec, up_vec, centre_vec, ai_vec, bkc_vec, filename, globalIllumination, raysPerPixel, maxBounces, probTerminate, antiAliasing, twoSideRender));
         }
     }
 }
