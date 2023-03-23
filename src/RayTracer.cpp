@@ -12,7 +12,7 @@
 #include "Camera.h"
 #include "Phong.h"
 #include "Rectangle.h"
-#include "lights/swag/AreaLight.h"
+#include "AreaLight.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
     /*
@@ -31,47 +31,47 @@ RayTracer::RayTracer(nlohmann::json& j) {
 
     nlohmann::json::iterator it;
     if ((it = j.find("geometry")) != j.end()) {
-        for (auto& [key, geometry] : (*it).items()) {
+        for (auto& geometry: (*it).items()) {
             // Material
-            std::vector<float> ac = *geometry.find("ac");
+            std::vector<float> ac = *geometry.value().find("ac");
             Eigen::Vector3f ambient_color = Eigen::Vector3f(ac.at(0), ac.at(1), ac.at(2));
 
-            std::vector<float> dc = *geometry.find("dc");
+            std::vector<float> dc = *geometry.value().find("dc");
             Eigen::Vector3f diffuse_color = Eigen::Vector3f(dc.at(0), dc.at(1), dc.at(2));
 
-            std::vector<float> sc = *geometry.find("sc");
+            std::vector<float> sc = *geometry.value().find("sc");
             Eigen::Vector3f specular_color = Eigen::Vector3f(sc.at(0), sc.at(1), sc.at(2));
 
-            float ambient_coeff = *geometry.find("ka");
-            float diffuse_coeff = *geometry.find("kd");
-            float specular_coeff = *geometry.find("ks");
+            float ambient_coeff = *geometry.value().find("ka");
+            float diffuse_coeff = *geometry.value().find("kd");
+            float specular_coeff = *geometry.value().find("ks");
 
-            float phong_coeff = *geometry.find("pc");
+            float phong_coeff = *geometry.value().find("pc");
 
             std::shared_ptr<Phong> geometry_material = std::make_shared<Phong>(ambient_color, diffuse_color, specular_color,
                                                                                ambient_coeff, diffuse_coeff, specular_coeff,
                                                                                phong_coeff);
 
             // Geometry type specific stuff
-            std::string geometry_type = *geometry.find("type");
+            std::string geometry_type = *geometry.value().find("type");
             if (geometry_type == "sphere") {
-                std::vector<float> centre = *geometry.find("centre");
+                std::vector<float> centre = *geometry.value().find("centre");
                 Eigen::Vector3f centre_vector = Eigen::Vector3f(centre.at(0), centre.at(1), centre.at(2));
 
-                float sphere_radius = *geometry.find("radius");
+                float sphere_radius = *geometry.value().find("radius");
 
                 world.add(std::make_shared<Sphere>(centre_vector, sphere_radius, geometry_material));
             } else if (geometry_type == "rectangle") {
-                std::vector<float> p1 = *geometry.find("p1");
+                std::vector<float> p1 = *geometry.value().find("p1");
                 Eigen::Vector3f point_1 = Eigen::Vector3f(p1.at(0), p1.at(1), p1.at(2));
 
-                std::vector<float> p2 = *geometry.find("p2");
+                std::vector<float> p2 = *geometry.value().find("p2");
                 Eigen::Vector3f point_2 = Eigen::Vector3f(p2.at(0), p2.at(1), p2.at(2));
 
-                std::vector<float> p3 = *geometry.find("p3");
+                std::vector<float> p3 = *geometry.value().find("p3");
                 Eigen::Vector3f point_3 = Eigen::Vector3f(p3.at(0), p3.at(1), p3.at(2));
 
-                std::vector<float> p4 = *geometry.find("p4");
+                std::vector<float> p4 = *geometry.value().find("p4");
                 Eigen::Vector3f point_4 = Eigen::Vector3f(p4.at(0), p4.at(1), p4.at(2));
 
                 world.add(std::make_shared<Rectangle>(point_1, point_2, point_3, point_4, geometry_material));
