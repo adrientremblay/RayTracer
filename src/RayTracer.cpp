@@ -124,7 +124,32 @@ RayTracer::RayTracer(nlohmann::json& j) {
 
             std::string filename = *output.value().find("filename");
 
-            cameras.push_back(Camera(fov, size.at(0), size.at(1), lookat_vec, up_vec, centre_vec, ai_vec, bkc_vec, filename));
+            // Optional output parameters
+            bool globalIllumination = false;
+            nlohmann::json::iterator globalIllumIter = output.value().find("globalillum");
+            if (globalIllumIter != output.value().end()) {
+                globalIllumination = *globalIllumIter;
+            }
+
+            std::vector<int> raysPerPixel = {1};
+            nlohmann::json::iterator raysPerPixelIter = output.value().find("raysperpixel");
+            if (raysPerPixelIter != output.value().end()) {
+                raysPerPixel = raysPerPixelIter->get<std::vector<int>>();
+            }
+
+            int maxBounces = 1;
+            nlohmann::json::iterator maxBouncesIter = output.value().find("maxbounces");
+            if (maxBouncesIter != output.value().end()) {
+                maxBounces = *maxBouncesIter;
+            }
+
+            float probTerminate = 1;
+            nlohmann::json::iterator probTerminateIter = output.value().find("probterminate");
+            if (probTerminateIter != output.value().end()) {
+                probTerminate = *probTerminateIter;
+            }
+
+            cameras.push_back(Camera(fov, size.at(0), size.at(1), lookat_vec, up_vec, centre_vec, ai_vec, bkc_vec, filename, globalIllumination, raysPerPixel, maxBounces, probTerminate));
         }
     }
 }
