@@ -9,7 +9,7 @@ fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normal
     double theta = degreesToRadians(fov);
     double h = tan(theta / 2);
 
-    aspectRatio = imageHeight / imageWidth;
+    aspectRatio = imageWidth / imageHeight;
 
     auto viewport_height = 2.0 * h;
     auto viewport_width = aspectRatio * viewport_height;
