@@ -157,9 +157,7 @@ RayTracer::RayTracer(nlohmann::json& j) {
 void RayTracer::run() {
     for (Camera camera : cameras)  {
         // Image
-        const int samples_per_pixel = 20; // turn this up for good renders
-        const double pp_scale = 1.0 / samples_per_pixel;
-        const double max_depth = 20;
+        const double pp_scale = 1.0 / camera.raysPerPixel.at(0);
 
         // Render
         std::vector<double> buffer(3*camera.imageWidth*camera.imageHeight);
@@ -168,11 +166,11 @@ void RayTracer::run() {
             for (int i = 0 ; i < camera.imageWidth ; i++){
                 Eigen::Vector3f pixel_color(0, 0, 0);
 
-                for (int s = 1 ; s <= samples_per_pixel ; s++) {
+                for (int s = 1 ; s <= camera.raysPerPixel.at(0) ; s++) {
                     double u = double(i + random_double())  / (camera.imageWidth-1);
                     double v = double(j + random_double())  / (camera.imageHeight-1);
                     Ray ray = camera.getRay(u, v);
-                    pixel_color += rayColor(ray, max_depth, camera);
+                    pixel_color += rayColor(ray, camera.maxBounces, camera);
                 }
 
                 // scale and gamma correct and clamp
