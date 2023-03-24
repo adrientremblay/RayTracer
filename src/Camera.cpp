@@ -34,6 +34,7 @@ fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normal
         raySamplingStrategy = new RandomRaySamplingStrategy();
     }
 }
+
 Ray Camera::getRay(double ray_x, double ray_y) const {
     return Ray(centre, (lowerLeftCorner + (ray_x / imageWidth) * horizontal + (ray_y / imageHeight) * vertical - centre).normalized());
 }
