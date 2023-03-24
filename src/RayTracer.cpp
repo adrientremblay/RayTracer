@@ -95,7 +95,10 @@ RayTracer::RayTracer(nlohmann::json& j) {
                 std::vector<float> p4 = *light.value().find("p4");
                 Eigen::Vector3f point_4 = Eigen::Vector3f(p4.at(0), p4.at(1), p4.at(2));
 
-                bool use_center = *light.value().find("usecenter");
+                bool use_center = false;
+                nlohmann::json::iterator userCenterIter = light.value().find("usecenter");
+                if (userCenterIter != light.value().end())
+                    use_center = *userCenterIter;
 
                 AreaLight* area_light_ptr = new AreaLight(light_diffuse_color, light_specular_color, point_1, point_2, point_3, point_4, use_center);
                 lights.push_back(area_light_ptr);
@@ -228,44 +231,3 @@ inline float RayTracer::gammaCorrect(float color) {
     return color;
 # endif
 }
-
-/*
-if (camera.raysPerPixel.size() == 1) { // randomly sample rays in the pixel
-    for (int ray_number = 1 ; ray_number <= camera.raysPerPixel.at(0) ; ray_number++) {
-        double ray_x = double(pixel_bottom_left_x + random_double());
-        double ray_y = double(pixel_bottom_left_y + random_double());
-
-        Ray ray = camera.getRay(ray_x, ray_y);
-        pixel_color += rayColor(ray, camera.maxBounces, camera);
-    }
-} else if (camera.raysPerPixel.size() == 2 || camera.raysPerPixel.size() == 3) {
-    // nxm matrix of stratas per pixel
-    int strata_cols;
-    int strata_rows;
-    double strata_width;
-    double strata_height;
-    int rays_per_strata = camera.raysPerPixel.at(camera.raysPerPixel.size()-1);
-    if (camera.raysPerPixel.size() == 2) {
-        strata_cols = strata_rows = camera.raysPerPixel.at(0);
-        strata_width = strata_height = 1 / strata_cols;
-    } else {
-        strata_cols = camera.raysPerPixel.at(1);
-        strata_rows = camera.raysPerPixel.at(0);
-        strata_width = 1 / strata_cols;
-        strata_height = 1 / strata_rows;
-    }
-
-    for (int strata_x = 0 ; strata_x < strata_cols ; strata_x++) {
-        for (int strata_y = 0 ; strata_y < strata_cols ; strata_y++) {
-            for (int ray_number = 1 ; ray_number <= camera.raysPerPixel.at(0) ; ray_number++) {
-
-            }
-
-            double ray_x = double(pixel_bottom_left_x + (strata_x * strata_width) + random_double(strata_width));
-            double ray_y = double(pixel_bottom_left_y + (strata_y * strata_height) + random_double(strata_height));
-
-            Ray ray = camera.getRay(ray_x, ray_y);
-            pixel_color += rayColor(ray, camera.maxBounces, camera);
-        }
-    }
-    */

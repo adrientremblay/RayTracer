@@ -22,6 +22,9 @@ public:
 
     virtual Eigen::Vector3f getDirection(const HitRecord& hitRecord) const override;
     virtual Eigen::Vector3f getPosition() const override;
+private:
+    Eigen::Vector3f p1p2;
+    Eigen::Vector3f p2p3;
 };
 
 
