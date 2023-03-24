@@ -21,9 +21,6 @@ struct RayCoord {
 
 class RaySamplingStrategy {
 public:
-    RaySamplingStrategy() {
-
-    }
     virtual std::vector<RayCoord> sampleRayCoords(double pixel_bottom_left_x, double pixel_bottom_left_y, const std::vector<int>& raysPerPixel) const = 0;
 };
 

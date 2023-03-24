@@ -9,9 +9,6 @@
 
 class RandomRaySamplingStrategy : public RaySamplingStrategy {
 public:
-    RandomRaySamplingStrategy() {
-
-    }
     virtual std::vector<RayCoord> sampleRayCoords(double pixel_bottom_left_x, double pixel_bottom_left_y, const std::vector<int>& raysPerPixel) const override;
 };
 
