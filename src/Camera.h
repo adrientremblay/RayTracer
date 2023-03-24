@@ -9,11 +9,14 @@
 #include "util.h"
 #include "Eigen/Dense"
 #include "Ray.h"
+#include "RaySamplingStrategy.h"
 
 const double focal_length = 1.0;
 
 class Camera {
 public:
+    RaySamplingStrategy* raySamplingStrategy;
+
     Eigen::Vector3f lowerLeftCorner;
     Eigen::Vector3f horizontal;
     Eigen::Vector3f vertical;
@@ -37,6 +40,8 @@ public:
 
     Camera(double fov, double imageWidth, double imageHeight, Eigen::Vector3f lookat, Eigen::Vector3f up, Eigen::Vector3f centre, Eigen::Vector3f ai, Eigen::Vector3f bkc, std::string filename, bool globalIllumination, const std::vector<int>& raysPerPixel, int maxBounces, float probTerminate, bool antiAliasing, bool twoSideRender);
 
+    std::vector<Ray> sampleRays(double pixel_bottom_left_x, double pixel_bottom_left_y);
+private:
     Ray getRay(double ray_x, double ray_y) const;
 };
 
