@@ -14,13 +14,16 @@ class Material;
 struct HitRecord {
     Eigen::Vector3f point;
     Eigen::Vector3f normal;
+    Eigen::Vector3f outwardNormal;
     std::shared_ptr<Material> material;
     double t;
     bool rayFromOutside;
 
-    inline void setFaceNormal(const Ray& ray, const Eigen::Vector3f& outwardNormal) {
-        rayFromOutside = ray.getDirection().dot(outwardNormal) < 0;
-        normal = rayFromOutside ? outwardNormal : -outwardNormal;
+    inline void setFaceNormal(const Ray& ray, const Eigen::Vector3f& norm) {
+        normal = norm;
+
+        rayFromOutside = ray.getDirection().dot(norm) < 0;
+        outwardNormal = rayFromOutside ? norm : -norm;
     }
 };
 

@@ -17,7 +17,7 @@ Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const
 
         // Shadow ray
         HitRecord shadowHitRecord;
-        if (world.hit(Ray(hitRecord.point + (shadowAcneBias * hitRecord.normal), light_direction), 0.001, (hitRecord.point + (shadowAcneBias * hitRecord.normal) - light_ptr->getPosition()).norm(), shadowHitRecord))
+        if (world.hit(Ray(hitRecord.point + (shadowAcneBias * hitRecord.outwardNormal), light_direction), 0.001, (hitRecord.point + (shadowAcneBias * hitRecord.normal) - light_ptr->getPosition()).norm(), shadowHitRecord))
             continue;
 
         // Shading
@@ -25,8 +25,8 @@ Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const
         Eigen::Vector3f halfway_vector = (light_direction + view_direction).normalized();
 
         Eigen::Vector3f ambient = ambientCoeff * ambientColor;
-        Eigen::Vector3f diffuse = vector_multiply(light_ptr->diffuseColor, diffuseCoeff * light_direction.dot(hitRecord.normal) * diffuseColor);
-        Eigen::Vector3f specular = vector_multiply(light_ptr->specularColor,  specularCoeff * pow(std::max(hitRecord.normal.dot(halfway_vector), 0.0f), phongCoeff) * specularColor);
+        Eigen::Vector3f diffuse = vector_multiply(light_ptr->diffuseColor, diffuseCoeff * light_direction.dot(hitRecord.outwardNormal) * diffuseColor);
+        Eigen::Vector3f specular = vector_multiply(light_ptr->specularColor,  specularCoeff * pow(std::max(hitRecord.outwardNormal.dot(halfway_vector), 0.0f), phongCoeff) * specularColor);
 
         ret += ambient + diffuse + specular;
     }
