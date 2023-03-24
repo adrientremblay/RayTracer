@@ -73,7 +73,7 @@
 
             "globalillum": false,
             "antialiasing":true,
-            "raysperpixel": [2, 2]
+            "raysperpixel": [2, 2, 2]
         }
     ]
 }

@@ -6,6 +6,7 @@
 #include "RaySamplingStrategy.h"
 #include "RandomRaySamplingStrategy.h"
 #include "StratifiedNNRaySamplingStrategy.h"
+#include "StratifiedNMRaySamplingStrategy.h"
 
 Camera::Camera(double fov, double imageWidth, double imageHeight, Eigen::Vector3f lookat, Eigen::Vector3f up, Eigen::Vector3f centre, Eigen::Vector3f ai, Eigen::Vector3f bkc, std::string filename, bool globalIllumination, const std::vector<int>& raysPerPixel, int maxBounces, float probTerminate, bool antiAliasing, bool twoSideRender) :
 fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normalized()), up(up.normalized()), centre(centre), ai(ai), bkc(bkc), filename(filename), globalIllumination(globalIllumination), raysPerPixel(raysPerPixel), maxBounces(maxBounces), probTerminate(probTerminate), antiAliasing(antiAliasing), twoSideRender(twoSideRender) {
@@ -25,11 +26,12 @@ fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normal
     vertical = viewport_height * v;
     lowerLeftCorner = centre - horizontal / 2 - vertical / 2 - (focal_length * w);
 
-    if ((antiAliasing || globalIllumination) && raysPerPixel.size() == 2)  {
-        raySamplingStrategy = new StratifiedNNRaySamplingStrategy();
-    } else if (raysPerPixel.size() == 3)  {
-        // todo: change
-        raySamplingStrategy = new RandomRaySamplingStrategy();
+    if ((antiAliasing || globalIllumination) && raysPerPixel.size() > 1)  {
+        if (raysPerPixel.size() == 2) {
+            raySamplingStrategy = new StratifiedNNRaySamplingStrategy();
+        } else {
+            raySamplingStrategy = new StratifiedNMRaySamplingStrategy();
+        }
     } else {
         raySamplingStrategy = new RandomRaySamplingStrategy();
     }
