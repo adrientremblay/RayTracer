@@ -178,11 +178,29 @@ void RayTracer::run() {
             for (int pixel_bottom_left_x = 0 ; pixel_bottom_left_x < camera.imageWidth ; pixel_bottom_left_x++) {
                 Eigen::Vector3f pixel_color(0, 0, 0);
 
-                for (int s = 1 ; s <= camera.raysPerPixel.at(0) ; s++) {
-                    double ray_x = double(pixel_bottom_left_x + random_double());
-                    double ray_y = double(pixel_bottom_left_y + random_double());
-                    Ray ray = camera.getRay(ray_x, ray_y);
-                    pixel_color += rayColor(ray, camera.maxBounces, camera);
+                // todo: get rid of repeated code?
+                if (camera.raysPerPixel.size() == 1) { // randomly sample rays in the pixel
+                    for (int ray_number = 1 ; ray_number <= camera.raysPerPixel.at(0) ; ray_number++) {
+                        double ray_x = double(pixel_bottom_left_x + random_double());
+                        double ray_y = double(pixel_bottom_left_y + random_double());
+
+                        Ray ray = camera.getRay(ray_x, ray_y);
+                        pixel_color += rayColor(ray, camera.maxBounces, camera);
+                    }
+                } else if (camera.raysPerPixel.size() == 2) {
+                    int n = camera.raysPerPixel.at(0); // nxn matrix of stratas per pixel
+                    double strata_len= 1 / camera.raysPerPixel.at(0);
+                    for (int strata_x = 0 ; strata_x < n ; strata_x++) {
+                        for (int strata_y = 0 ; strata_y < n ; strata_y++) {
+                            double ray_x = double(pixel_bottom_left_x + (strata_x / strata_len) + random_double(strata_len));
+                            double ray_y = double(pixel_bottom_left_y + (strata_y / strata_len) + random_double(strata_len));
+
+                            Ray ray = camera.getRay(ray_x, ray_y);
+                            pixel_color += rayColor(ray, camera.maxBounces, camera);
+                        }
+                    }
+                } else if (camera.raysPerPixel.size() == 3) {
+
                 }
 
                 // scale, gamma correct and clamp

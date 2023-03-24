@@ -3,3 +3,4 @@
 - Stratified rays per pixel
 - Area lights
 - 2 sided render
+- Variable checking when loading JSON??? for example making sure raysPerPixel has 1-3 vals

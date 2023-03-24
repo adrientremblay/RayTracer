@@ -27,6 +27,15 @@ inline double random_double() {
 
 /**
  *
+ * @param max
+ * @return random double in [0, max)
+ */
+inline double random_double(double max) {
+    return rand() / (RAND_MAX + max);
+}
+
+/**
+ *
  * @param min
  * @param max
  * @return random double in [min, max)
