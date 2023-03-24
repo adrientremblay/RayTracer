@@ -169,9 +169,6 @@ RayTracer::RayTracer(nlohmann::json& j) {
 
 void RayTracer::run() {
     for (Camera camera : cameras)  {
-
-        const double pp_scale = 1.0 / camera.raysPerPixel.at(0);
-
         // Render
         std::vector<double> buffer(3*camera.imageWidth*camera.imageHeight);
         for (int pixel_bottom_left_y = 0 ; pixel_bottom_left_y < camera.imageHeight ; pixel_bottom_left_y++) {
@@ -179,13 +176,14 @@ void RayTracer::run() {
             for (int pixel_bottom_left_x = 0 ; pixel_bottom_left_x < camera.imageWidth ; pixel_bottom_left_x++) {
                 Eigen::Vector3f pixel_color(0, 0, 0);
 
-                for (Ray ray : camera.sampleRays(pixel_bottom_left_x, pixel_bottom_left_y))
+                std::vector<Ray> rays = std::move(camera.sampleRays(pixel_bottom_left_x, pixel_bottom_left_y));
+                for (Ray ray : rays)
                     pixel_color += rayColor(ray, camera.maxBounces, camera);
 
                 // scale, gamma correct and clamp
-                const double r = clamp(gammaCorrect(pixel_color.x() * pp_scale), 0.0, 0.999);
-                const double g = clamp(gammaCorrect(pixel_color.y() * pp_scale), 0.0, 0.999);
-                const double b = clamp(gammaCorrect(pixel_color.z() * pp_scale), 0.0, 0.999);
+                const double r = clamp(gammaCorrect(pixel_color.x() / rays.size()), 0.0, 0.999);
+                const double g = clamp(gammaCorrect(pixel_color.y() / rays.size()), 0.0, 0.999);
+                const double b = clamp(gammaCorrect(pixel_color.z() / rays.size()), 0.0, 0.999);
 
                 const int row = 3 * (camera.imageHeight - pixel_bottom_left_y - 1) * camera.imageWidth;
                 const int col = 3 * pixel_bottom_left_x;
