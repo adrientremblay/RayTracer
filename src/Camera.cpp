@@ -41,7 +41,8 @@ Ray Camera::getRay(double ray_x, double ray_y) const {
 std::vector<Ray> Camera::sampleRays(double pixel_bottom_left_x, double pixel_bottom_left_y) {
     std::vector<RayCoord> rayCoords = std::move(raySamplingStrategy->sampleRayCoords(pixel_bottom_left_x, pixel_bottom_left_y, raysPerPixel));
 
-    std::vector<Ray> rays(rayCoords.size());
+    std::vector<Ray> rays;
+    rays.reserve(rayCoords.size());
 
     for (RayCoord rayCoord : rayCoords)
         rays.push_back(getRay(rayCoord.x, rayCoord.y));

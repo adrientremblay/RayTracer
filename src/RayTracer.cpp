@@ -179,7 +179,6 @@ void RayTracer::run() {
             for (int pixel_bottom_left_x = 0 ; pixel_bottom_left_x < camera.imageWidth ; pixel_bottom_left_x++) {
                 Eigen::Vector3f pixel_color(0, 0, 0);
 
-
                 for (Ray ray : camera.sampleRays(pixel_bottom_left_x, pixel_bottom_left_y))
                     pixel_color += rayColor(ray, camera.maxBounces, camera);
 
