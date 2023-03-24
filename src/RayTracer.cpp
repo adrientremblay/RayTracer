@@ -156,9 +156,9 @@ RayTracer::RayTracer(nlohmann::json& j) {
             }
 
             bool twoSideRender = true;
-            nlohmann::json::iterator twoSideRenderIter = output.value().find("antialiasing");
+            nlohmann::json::iterator twoSideRenderIter = output.value().find("twosiderender");
             if (twoSideRenderIter != output.value().end()) {
-                twoSideRender = *antiAliasingIter;
+                twoSideRender = *twoSideRenderIter;
             }
 
             cameras.push_back(Camera(fov, size.at(0), size.at(1), lookat_vec, up_vec, centre_vec, ai_vec, bkc_vec, filename, globalIllumination, raysPerPixel, maxBounces, probTerminate, antiAliasing, twoSideRender));
@@ -175,7 +175,7 @@ void RayTracer::run() {
         std::vector<double> buffer(3*camera.imageWidth*camera.imageHeight);
         for (int j = 0 ; j < camera.imageHeight ; j++) {
             std::cerr << "\rScanlines remaining: " << camera.imageHeight - j << std::flush;
-            for (int i = 0 ; i < camera.imageWidth ; i++){
+            for (int i = 0 ; i < camera.imageWidth ; i++) {
                 Eigen::Vector3f pixel_color(0, 0, 0);
 
                 for (int s = 1 ; s <= camera.raysPerPixel.at(0) ; s++) {
@@ -199,11 +199,6 @@ void RayTracer::run() {
             }
         }
         std::cerr << "\nDone.\n";
-
-        std::cerr << "\nCleaning Up...\n";
-        for (auto light : lights) {
-            delete light;
-        }
 
         save_ppm(camera.filename, buffer, camera.imageWidth, camera.imageHeight);
     }
