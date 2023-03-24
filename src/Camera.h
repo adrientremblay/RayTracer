@@ -37,7 +37,7 @@ public:
 
     Camera(double fov, double imageWidth, double imageHeight, Eigen::Vector3f lookat, Eigen::Vector3f up, Eigen::Vector3f centre, Eigen::Vector3f ai, Eigen::Vector3f bkc, std::string filename, bool globalIllumination, const std::vector<int>& raysPerPixel, int maxBounces, float probTerminate, bool antiAliasing, bool twoSideRender);
 
-    Ray getRay(double u, double v) const;
+    Ray getRay(double ray_x, double ray_y) const;
 };
 
 

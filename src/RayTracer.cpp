@@ -173,25 +173,25 @@ void RayTracer::run() {
 
         // Render
         std::vector<double> buffer(3*camera.imageWidth*camera.imageHeight);
-        for (int j = 0 ; j < camera.imageHeight ; j++) {
-            std::cerr << "\rScanlines remaining: " << camera.imageHeight - j << std::flush;
-            for (int i = 0 ; i < camera.imageWidth ; i++) {
+        for (int pixel_bottom_left_y = 0 ; pixel_bottom_left_y < camera.imageHeight ; pixel_bottom_left_y++) {
+            std::cerr << "\rScanlines remaining: " << camera.imageHeight - pixel_bottom_left_y << std::flush;
+            for (int pixel_bottom_left_x = 0 ; pixel_bottom_left_x < camera.imageWidth ; pixel_bottom_left_x++) {
                 Eigen::Vector3f pixel_color(0, 0, 0);
 
                 for (int s = 1 ; s <= camera.raysPerPixel.at(0) ; s++) {
-                    double u = double(i + random_double())  / (camera.imageWidth-1);
-                    double v = double(j + random_double())  / (camera.imageHeight-1);
-                    Ray ray = camera.getRay(u, v);
+                    double ray_x = double(pixel_bottom_left_x + random_double());
+                    double ray_y = double(pixel_bottom_left_y + random_double());
+                    Ray ray = camera.getRay(ray_x, ray_y);
                     pixel_color += rayColor(ray, camera.maxBounces, camera);
                 }
 
-                // scale and gamma correct and clamp
+                // scale, gamma correct and clamp
                 const double r = clamp(gammaCorrect(pixel_color.x() * pp_scale), 0.0, 0.999);
                 const double g = clamp(gammaCorrect(pixel_color.y() * pp_scale), 0.0, 0.999);
                 const double b = clamp(gammaCorrect(pixel_color.z() * pp_scale), 0.0, 0.999);
 
-                const int row = 3 * (camera.imageHeight - j - 1) * camera.imageWidth;
-                const int col = 3 * i;
+                const int row = 3 * (camera.imageHeight - pixel_bottom_left_y - 1) * camera.imageWidth;
+                const int col = 3 * pixel_bottom_left_x;
                 const int cell = row + col;
                 buffer[cell + 0] = r;
                 buffer[cell + 1] = g;

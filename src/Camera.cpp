@@ -23,6 +23,6 @@ fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normal
     lowerLeftCorner = centre - horizontal / 2 - vertical / 2 - (focal_length * w);
 }
 
-Ray Camera::getRay(double u, double v) const {
-    return Ray(centre, (lowerLeftCorner + u*horizontal + v*vertical - centre).normalized());
+Ray Camera::getRay(double ray_x, double ray_y) const {
+    return Ray(centre, (lowerLeftCorner + (ray_x / imageWidth) * horizontal + (ray_y / imageHeight) * vertical - centre).normalized());
 }
