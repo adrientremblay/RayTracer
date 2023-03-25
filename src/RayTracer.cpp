@@ -179,7 +179,6 @@ Eigen::Vector3f colorPixel(const Camera& camera, int pixel_bottom_left_x, int pi
     */
 }
 
-// todo: move all this shit to the camera class fuck it lmao
 void RayTracer::run() {
     for (Camera camera : cameras)  {
         std::vector<double> buffer(3*camera.imageWidth*camera.imageHeight);
