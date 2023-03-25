@@ -13,7 +13,6 @@
 #include "PointLight.h"
 #include "AreaLight.h"
 #include "Camera.h"
-#include "RaySamplingStrategy.h"
 
 #define GAMMA_CORRECTION_ENABLED false
 

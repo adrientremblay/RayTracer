@@ -4,10 +4,6 @@
 
 #include <iostream>
 #include "Camera.h"
-#include "RaySamplingStrategy.h"
-#include "RandomRaySamplingStrategy.h"
-#include "StratifiedNNRaySamplingStrategy.h"
-#include "StratifiedNMRaySamplingStrategy.h"
 #include "Hittable.h"
 #include <memory>
 #include "Material.h"
@@ -34,12 +30,12 @@ fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normal
 
     if ((antiAliasing || globalIllumination) && raysPerPixel.size() > 1)  {
         if (raysPerPixel.size() == 2) {
-            raySamplingStrategy = new StratifiedNNRaySamplingStrategy();
+            raySamplingStrat = NN;
         } else {
-            raySamplingStrategy = new StratifiedNMRaySamplingStrategy();
+            raySamplingStrat = NM;
         }
     } else {
-        raySamplingStrategy = new RandomRaySamplingStrategy();
+        raySamplingStrat = RANDOM;
     }
 
 #ifdef PRINT_CAMERA_INFO
@@ -65,12 +61,66 @@ Ray Camera::getRay(double ray_x, double ray_y) const {
 }
 
 void Camera::sampleRays(double pixel_bottom_left_x, double pixel_bottom_left_y, Eigen::Vector3f& pixelColor, const HittableList& world, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights) {
-    // Getting the ray coordinates todo: remove this
-    std::vector<RayCoord> rayCoords = std::move(raySamplingStrategy->sampleRayCoords(pixel_bottom_left_x, pixel_bottom_left_y, raysPerPixel));
+    int successful_rays = 0;
 
-    int successful_rays = rayCoords.size();
-    for (RayCoord rayCoord : rayCoords) {
-        sampleRay(rayCoord.x, rayCoord.y, pixelColor, world, pointLights, areaLights, successful_rays);
+    // todo: make the switch cleaner
+    switch (raySamplingStrat) {
+        int num_rays;
+        int strata_cols, strata_rows, rays_per_strata;
+        double strata_width, strata_height;
+        case RANDOM:
+            num_rays = raysPerPixel.at(0);
+
+            for (int ray_number = 1 ; ray_number <= num_rays ; ray_number++) {
+                double ray_x = pixel_bottom_left_x + random_double();
+                double ray_y = pixel_bottom_left_y + random_double();
+
+                sampleRay(ray_x, ray_y, pixelColor, world, pointLights, areaLights, successful_rays);
+            }
+            break;
+        case NN:
+            rays_per_strata = raysPerPixel.at(raysPerPixel.size()-1);
+            strata_cols = strata_rows = raysPerPixel.at(0);
+            strata_width = strata_height = 1 / strata_cols;
+
+            num_rays = rays_per_strata * strata_cols * strata_rows;
+
+            for (int strata_x = 0 ; strata_x < strata_cols ; strata_x++) {
+                for (int strata_y = 0 ; strata_y < strata_cols ; strata_y++) {
+                    for (int ray_number = 1 ; ray_number <= rays_per_strata ; ray_number++) {
+                        double ray_x = pixel_bottom_left_x + (strata_x * strata_width) + random_double(strata_width);
+                        double ray_y = pixel_bottom_left_y + (strata_y * strata_height) + random_double(strata_height);
+
+                        sampleRay(ray_x, ray_y, pixelColor, world, pointLights, areaLights, successful_rays);
+                    }
+                }
+            }
+            break;
+        case NM:
+            rays_per_strata = raysPerPixel.at(raysPerPixel.size()-1);
+            strata_cols = raysPerPixel.at(1);
+            strata_rows = raysPerPixel.at(0);
+            strata_width = 1 / strata_cols;
+            strata_height = 1 / strata_rows;
+
+            num_rays = rays_per_strata * strata_cols * strata_rows;
+
+            for (int strata_x = 0 ; strata_x < strata_cols ; strata_x++) {
+                for (int strata_y = 0 ; strata_y < strata_cols ; strata_y++) {
+                    for (int ray_number = 1 ; ray_number <= rays_per_strata ; ray_number++) {
+                        double ray_x = double(pixel_bottom_left_x + (strata_x * strata_width) + random_double(strata_width));
+                        double ray_y = double(pixel_bottom_left_y + (strata_y * strata_height) + random_double(strata_height));
+
+                        sampleRay(ray_x, ray_y, pixelColor, world, pointLights, areaLights, successful_rays);
+                    }
+                }
+            }
+            break;
+    }
+
+    if (successful_rays == 0) {
+        pixelColor = Eigen::Vector3f(0,0,0);
+        return;
     }
 
     pixelColor = Eigen::Vector3f(pixelColor.x() / successful_rays, pixelColor.y() / successful_rays, pixelColor.z() / successful_rays);
@@ -87,9 +137,8 @@ void Camera::sampleRay(double ray_x, double ray_y, Eigen::Vector3f& pixelColor, 
         bool hitNothing = false;
         Eigen::Vector3f path_trace_color = pathTrace(ray, world, pointLights, areaLights, maxBounces, hitNothing);
 
-        if (hitNothing) {
-            successfulRays--;
-        } else {
+        if (!hitNothing) {
+            successfulRays++;
             pixelColor += path_trace_color;
         }
     }
