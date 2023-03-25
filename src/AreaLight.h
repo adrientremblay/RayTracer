@@ -20,7 +20,7 @@ public:
     double n;
 
     AreaLight(Eigen::Vector3f diffuseColor, Eigen::Vector3f specularColor, Eigen::Vector3f p1, Eigen::Vector3f p2, Eigen::Vector3f p3, Eigen::Vector3f p4,
-              bool useCenter);
+              bool useCenter, double n);
 
     virtual Eigen::Vector3f getDirection(const HitRecord& hitRecord) const override;
     virtual Eigen::Vector3f getPosition() const override;

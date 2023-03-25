@@ -99,7 +99,12 @@ RayTracer::RayTracer(nlohmann::json& j) {
                 if (userCenterIter != light.value().end())
                     use_center = *userCenterIter;
 
-                areaLights.push_back(AreaLight(light_diffuse_color, light_specular_color, point_1, point_2, point_3, point_4, use_center));
+                double n = 10.0f;
+                nlohmann::json::iterator nIter = light.value().find("n");
+                if (nIter != light.value().end())
+                    n = nIter->get<double>();
+
+                areaLights.push_back(AreaLight(light_diffuse_color, light_specular_color, point_1, point_2, point_3, point_4, use_center, n));
             }
         }
     }
