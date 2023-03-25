@@ -15,7 +15,7 @@ public:
     Phong(const Eigen::Vector3f &ambientColor, const Eigen::Vector3f &diffuseColor,
                  const Eigen::Vector3f &specularColor, float ambientCoeff, float diffuseCoeff, float specularCoeff, float phongCoeff);
 
-    virtual Eigen::Vector3f color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights, const HittableList& world, bool globalIllumination) const override;
+    virtual Eigen::Vector3f color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights, const HittableList& world, bool globalIllumination, bool antiAliasing) const override;
 
     virtual Ray scatter(const Ray& rayIn, const HitRecord& hitRecord, bool twoSideRender) const override;
 };

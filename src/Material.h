@@ -27,7 +27,7 @@ public:
              const Eigen::Vector3f &specularColor, float ambientCoeff, float diffuseCoeff, float specularCoeff,
              float phongCoeff);
 
-    virtual Eigen::Vector3f color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights, const HittableList& world, bool globalIllumination) const = 0;
+    virtual Eigen::Vector3f color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights, const HittableList& world, bool globalIllumination, bool antiAliasing) const = 0;
     virtual Ray scatter(const Ray& rayIn, const HitRecord& hitRecord, bool twoSideRender) const = 0;
 };
 

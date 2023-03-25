@@ -10,7 +10,7 @@ Phong::Phong(const Eigen::Vector3f &ambientColor, const Eigen::Vector3f &diffuse
                    const Eigen::Vector3f &specularColor, float ambientCoeff, float diffuseCoeff, float specularCoeff, float phongCoeff) : Material(ambientColor, diffuseColor, specularColor, ambientCoeff, diffuseCoeff, specularCoeff, phongCoeff) {
 }
 
-Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights, const HittableList& world, bool globalIllumination) const {
+Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights, const HittableList& world, bool globalIllumination, bool antiAliasing) const {
     Eigen::Vector3f ret(0, 0, 0);
 
     for (PointLight point_light : pointLights) {
@@ -18,7 +18,7 @@ Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const
     }
 
     for (AreaLight area_light : areaLights) {
-        if (area_light.useCenter) {
+        if (area_light.useCenter || antiAliasing) {
             ret += phongShade(rayIn, hitRecord, world, area_light.getPosition(), area_light.getDirection(hitRecord), area_light.diffuseColor, area_light.specularColor, globalIllumination);
         } else {
             Eigen::Vector3f temp(0, 0, 0);
