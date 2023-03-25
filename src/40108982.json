@@ -43,8 +43,8 @@
             "p3":[0, 7, -4],
             "id":[1, 1, 1],
             "is":[1, 1, 1],
-            "usecenter":false,
-            "n": 5
+            "usecenter":true,
+            "n": 3
         },
         {
             "type":"point",
