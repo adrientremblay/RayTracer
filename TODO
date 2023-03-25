@@ -4,5 +4,4 @@
 - Optimization???
 - Make sure all variables from RayTracer doc are set
 - Useful console output messages about each output
-- Transforms>
-- anti-aliasing and area light source à if both are specified ignore the anti-aliasing
+- Transforms

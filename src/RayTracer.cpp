@@ -178,7 +178,7 @@ void RayTracer::run() {
         // Render
         std::vector<double> buffer(3*camera.imageWidth*camera.imageHeight);
         for (int pixel_bottom_left_y = 0 ; pixel_bottom_left_y < camera.imageHeight ; pixel_bottom_left_y++) {
-            std::cerr << "\rScanlines remaining: " << camera.imageHeight - pixel_bottom_left_y << std::flush;
+            std::cout << "\rScanlines remaining: " << camera.imageHeight - pixel_bottom_left_y << std::flush;
             for (int pixel_bottom_left_x = 0 ; pixel_bottom_left_x < camera.imageWidth ; pixel_bottom_left_x++) {
                 Eigen::Vector3f pixel_color(0, 0, 0);
 

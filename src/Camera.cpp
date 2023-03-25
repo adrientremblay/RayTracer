@@ -2,11 +2,14 @@
 // Created by adrien on 28/02/23.
 //
 
+#include <iostream>
 #include "Camera.h"
 #include "RaySamplingStrategy.h"
 #include "RandomRaySamplingStrategy.h"
 #include "StratifiedNNRaySamplingStrategy.h"
 #include "StratifiedNMRaySamplingStrategy.h"
+
+#define PRINT_CAMERA_INFO
 
 Camera::Camera(double fov, double imageWidth, double imageHeight, Eigen::Vector3f lookat, Eigen::Vector3f up, Eigen::Vector3f centre, Eigen::Vector3f ai, Eigen::Vector3f bkc, std::string filename, bool globalIllumination, const std::vector<int>& raysPerPixel, int maxBounces, float probTerminate, bool antiAliasing, bool twoSideRender) :
 fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normalized()), up(up.normalized()), centre(centre), ai(ai), bkc(bkc), filename(filename), globalIllumination(globalIllumination), raysPerPixel(raysPerPixel), maxBounces(maxBounces), probTerminate(probTerminate), antiAliasing(antiAliasing), twoSideRender(twoSideRender) {
@@ -35,6 +38,22 @@ fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normal
     } else {
         raySamplingStrategy = new RandomRaySamplingStrategy();
     }
+
+#ifdef PRINT_CAMERA_INFO
+    std::cout << "Camera created with the following values \n"
+        << "FOV: " << fov << '\n'
+        << "Image Width: " << imageWidth << '\n'
+        << "Image Height: " << imageHeight << '\n'
+        << "Lookat Vector: " << lookat.transpose() << '\n'
+        << "Up Vector: " << up.transpose() << '\n'
+        << "Centre Vector: " << centre.transpose() << '\n'
+        << "ai: " << ai.transpose() << '\n'
+        << "bkc: " << bkc.transpose() << '\n'
+        << "filename: " << filename << '\n'
+        << "Global Illumination: " << globalIllumination << '\n'
+    //    << "raysPerPixel: " << raysPerPixel << '\n'
+    ;
+#endif
 }
 
 Ray Camera::getRay(double ray_x, double ray_y) const {
