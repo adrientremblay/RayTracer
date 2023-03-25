@@ -14,8 +14,6 @@
 #include "AreaLight.h"
 #include "Camera.h"
 
-#define GAMMA_CORRECTION_ENABLED false
-
 class RayTracer {
 private:
     HittableList world;

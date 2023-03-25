@@ -347,8 +347,8 @@
 
         "twosiderender": true,
         "globalillum": true,
-        "raysperpixel": [50],
-        "maxbounces": 2,
+        "raysperpixel": [10, 10],
+        "maxbounces": 3,
         "probterminate": 0.333
     }
     ]

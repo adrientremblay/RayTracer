@@ -187,6 +187,9 @@ void RayTracer::run() {
         const int rows_per_thread = camera.imageHeight / num_threads; // todo: what if this isn't a nice int???
         std::vector<std::thread> threads(num_threads);
 
+        double rows_rendered = 0;
+        double rows_to_render = camera.imageHeight;
+
         for (int thread_index = 0 ; thread_index < num_threads ; thread_index++) {
             threads[thread_index] = std::thread([&, thread_index]() {
                 for (int pixel_bottom_left_y = (thread_index * rows_per_thread) ; pixel_bottom_left_y < ((thread_index + 1) * rows_per_thread) ; pixel_bottom_left_y++) {
@@ -207,6 +210,8 @@ void RayTracer::run() {
                         buffer[cell + 1] = g;
                         buffer[cell + 2] = b;
                     }
+                    rows_rendered++;
+                    std::cout << "Rendering is " << rows_rendered/rows_to_render << "% complete\n";
                 }
             });
         }
@@ -216,7 +221,7 @@ void RayTracer::run() {
             threads[thread_index].join();
         }
 
-        std::cerr << "\nDone.\n";
+        std::cout << "\nDone.\n";
 
         save_ppm(camera.filename, buffer, camera.imageWidth, camera.imageHeight);
     }
