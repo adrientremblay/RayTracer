@@ -11,6 +11,7 @@
 #include "HittableList.h"
 #include "Sphere.h"
 #include "PointLight.h"
+#include "AreaLight.h"
 #include "Camera.h"
 #include "RaySamplingStrategy.h"
 
@@ -19,7 +20,8 @@
 class RayTracer {
 private:
     HittableList world;
-    std::vector<Light*> lights;
+    std::vector<PointLight> pointLights;
+    std::vector<AreaLight> areaLights;
     std::vector<Camera> cameras;
 public:
     RayTracer(nlohmann::json& j);

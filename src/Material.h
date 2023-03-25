@@ -10,6 +10,7 @@
 #include "util.h"
 #include "PointLight.h"
 #include "HittableList.h"
+#include "AreaLight.h"
 
 class Material {
 public:
@@ -26,7 +27,7 @@ public:
              const Eigen::Vector3f &specularColor, float ambientCoeff, float diffuseCoeff, float specularCoeff,
              float phongCoeff);
 
-    virtual Eigen::Vector3f color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<Light*>& lights, const HittableList& world) const = 0;
+    virtual Eigen::Vector3f color(const Ray& rayIn, const HitRecord& hitRecord, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights, const HittableList& world) const = 0;
 };
 
 

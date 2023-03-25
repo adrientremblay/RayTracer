@@ -14,14 +14,22 @@ bool useCenter) : Light(diffuseColor, specularColor), p1(p1), p2(p2), p3(p3), p4
     p1p2 = (p2 - p1);
     p2p3 = (p3 - p2);
     center = p1 + (0.5*p1p2) + (0.5*p2p3);
+
+    n = 10.0f;
+    double cell_len = 1 / n;
+    half_cell_len = cell_len / 2;
 }
 
 Eigen::Vector3f AreaLight::getDirection(const HitRecord& hitRecord) const {
-    if (useCenter)
-        return (center - hitRecord.point).normalized();
+    return (center - hitRecord.point).normalized();
+}
 
-    Eigen::Vector3f random_point_on_rect = p1 + (random_double()*p1p2) + (random_double()*p2p3);
-    return (random_point_on_rect - hitRecord.point).normalized();
+Eigen::Vector3f AreaLight::getDirection(const HitRecord& hitRecord, int area_light_row, int area_light_col) const {
+    float s1 = double((area_light_row/n) - half_cell_len);
+    float s2 = double((area_light_col/n) - half_cell_len);
+
+    Eigen::Vector3f cell_center = p1 + (s1 * p1p2) + (s2 * p2p3);
+    return (cell_center - hitRecord.point).normalized();
 }
 
 Eigen::Vector3f AreaLight::getPosition() const {

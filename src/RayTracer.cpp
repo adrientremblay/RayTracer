@@ -80,8 +80,7 @@ RayTracer::RayTracer(nlohmann::json& j) {
                 std::vector<float> centre = *light.value().find("centre");
                 Eigen::Vector3f light_centre = Eigen::Vector3f(centre.at(0), centre.at(1), centre.at(2));
 
-                PointLight* point_light_ptr = new PointLight(light_centre, light_diffuse_color, light_specular_color);
-                lights.push_back(point_light_ptr);
+                pointLights.push_back(PointLight(light_centre, light_diffuse_color, light_specular_color));
             } else if (light_type == "area") {
                 std::vector<float> p1 = *light.value().find("p1");
                 Eigen::Vector3f point_1 = Eigen::Vector3f(p1.at(0), p1.at(1), p1.at(2));
@@ -100,8 +99,7 @@ RayTracer::RayTracer(nlohmann::json& j) {
                 if (userCenterIter != light.value().end())
                     use_center = *userCenterIter;
 
-                AreaLight* area_light_ptr = new AreaLight(light_diffuse_color, light_specular_color, point_1, point_2, point_3, point_4, use_center);
-                lights.push_back(area_light_ptr);
+                areaLights.push_back(AreaLight(light_diffuse_color, light_specular_color, point_1, point_2, point_3, point_4, use_center));
             }
         }
     }
@@ -208,7 +206,7 @@ Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth, const Camera& cam
 
     HitRecord hitRecord;
     if (world.hit(ray, 0.001, infinity, hitRecord)) {
-        return hitRecord.material->color(ray, hitRecord, lights, world);
+        return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world);
 
         /*
         Ray scattered;
