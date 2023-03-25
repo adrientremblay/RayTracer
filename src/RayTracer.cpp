@@ -144,7 +144,7 @@ RayTracer::RayTracer(nlohmann::json& j) {
                 maxBounces = *maxBouncesIter;
             }
 
-            float probTerminate = 1;
+            float probTerminate = 0.333f;
             nlohmann::json::iterator probTerminateIter = output.value().find("probterminate");
             if (probTerminateIter != output.value().end()) {
                 probTerminate = *probTerminateIter;
@@ -206,22 +206,20 @@ void RayTracer::run() {
 }
 
 Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth, const Camera& camera) {
-    if (depth <= 0)
-        return Eigen::Vector3f(0, 0, 0);
-
     HitRecord hitRecord;
     if (world.hit(ray, 0.001, infinity, hitRecord)) {
-        return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world);
+        if (camera.globalIllumination) {
+            if (depth <= 0 || random_double() <= camera.probTerminate) {
+                // finally now we use the lights to calculate the final result
+                return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world, camera.globalIllumination);
+            }
 
-        /*
-        Ray scattered;
-        Eigen::Vector3f attenuation;
-        if (hitRecord.material->scatter(ray, hitRecord, attenuation, scattered)) {
-            return vector_multiply(attenuation, rayColor(scattered, depth-1));
+            Ray scatterRay = hitRecord.material->scatter(ray, hitRecord, camera.twoSideRender);
+            return vector_multiply(hitRecord.material->diffuseColor, rayColor(scatterRay, depth-1, camera));
+        } else {
+            // do the calculations for the light as we are ray tracing
+            return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world, camera.globalIllumination);
         }
-
-        return Eigen::Vector3f(0, 0, 0);
-        */
     }
 
     return camera.bkc;

@@ -1,8 +1,8 @@
 - Note that when we compute whether a point is in the shadow of an object, the order in which the objects intersected by the shadow ray doesn't matter. It doesn't matter if the object that the shadow ray intersects is not the closest object to the ray's origin. All we care about in this case of a shadow ray is to know if the ray intersects an object at all in which case the point from which the shadow ray was cast is in shadow. Practically, this means that for shadow rays, we could very well return from the trace function as soon as we intersect one object in the scene. This can potentially save some computation time.
-- Area lights
-- 2 sided render
 - Variable checking when loading JSON??? for example making sure raysPerPixel has 1-3 vals
 - Switch to using std::array instead of std::vector wherever possible
 - Optimization???
 - Make sure all variables from RayTracer doc are set
 - Useful console output messages about each output
+- Transforms>
+- anti-aliasing and area light source à if both are specified ignore the anti-aliasing
