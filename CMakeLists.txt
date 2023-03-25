@@ -38,6 +38,8 @@ else()
 set(ENV{EIGEN3_ROOT} /encs/pkg/eigen-3.3.7/root)
 set(CMAKE_MODULE_PATH /encs/pkg/eigen-3.3.7/root/cmake)
 
+find_package(Threads REQUIRED)
+
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 endif()
@@ -54,4 +56,6 @@ aux_source_directory(external SOURCE)
 aux_source_directory(src SOURCE)
 
 add_executable(raytracer main.cpp ${SOURCE}) #The name of the cpp file and its path can vary
+
+target_link_libraries(raytracer Threads::Threads)
 

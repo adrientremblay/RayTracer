@@ -14,6 +14,7 @@
 #include "Rectangle.h"
 #include "AreaLight.h"
 #include "RandomRaySamplingStrategy.h"
+#include <thread>
 
 RayTracer::RayTracer(nlohmann::json& j) {
     // Parsing geometry section
@@ -173,49 +174,69 @@ RayTracer::RayTracer(nlohmann::json& j) {
     }
 }
 
-// todo: move all this shit to the camera clas fuck it lmao
+Eigen::Vector3f colorPixel(const Camera& camera, int pixel_bottom_left_x, int pixel_bottom_left_y) {
+   return Eigen::Vector3f(1, 0.5, 0.2);
+
+   /*
+    */
+}
+
+// todo: move all this shit to the camera class fuck it lmao
 void RayTracer::run() {
     for (Camera camera : cameras)  {
-        // Render
         std::vector<double> buffer(3*camera.imageWidth*camera.imageHeight);
-        for (int pixel_bottom_left_y = 0 ; pixel_bottom_left_y < camera.imageHeight ; pixel_bottom_left_y++) {
-            std::cout << "\rScanlines remaining: " << camera.imageHeight - pixel_bottom_left_y << std::flush;
-            for (int pixel_bottom_left_x = 0 ; pixel_bottom_left_x < camera.imageWidth ; pixel_bottom_left_x++) {
-                Eigen::Vector3f pixel_color(0, 0, 0);
 
-                std::vector<Ray> rays = std::move(camera.sampleRays(pixel_bottom_left_x, pixel_bottom_left_y));
+        const int num_threads = 8;
+        const int rows_per_thread = camera.imageHeight / num_threads; // todo: what if this isn't a nice int???
+        std::vector<std::thread> threads(num_threads);
 
-                int successfull_rays = rays.size();
-                if (!camera.globalIllumination) {
-                    for (Ray ray : rays) {
-                        pixel_color += rayTrace(ray,  camera);
-                    }
-                } else {
-                    for (Ray ray : rays) {
-                        bool hitNothing = false;
-                        Eigen::Vector3f path_trace_color = pathTrace(ray, camera.maxBounces, camera, hitNothing);
+        for (int thread_index = 0 ; thread_index < num_threads ; thread_index++) {
+            threads[thread_index] = std::thread([&, thread_index]() {
+                for (int pixel_bottom_left_y = (thread_index * rows_per_thread) ; pixel_bottom_left_y < ((thread_index + 1) * rows_per_thread) ; pixel_bottom_left_y++) {
+                    for (int pixel_bottom_left_x = 0 ; pixel_bottom_left_x < camera.imageWidth ; pixel_bottom_left_x++) {
+                        Eigen::Vector3f pixel_color(0, 0, 0);
 
-                        if (hitNothing) {
-                            successfull_rays--;
+                        std::vector<Ray> rays = std::move(camera.sampleRays(pixel_bottom_left_x, pixel_bottom_left_y));
+
+                        int successfull_rays = rays.size();
+                        if (!camera.globalIllumination) {
+                            for (Ray ray : rays) {
+                                pixel_color += rayTrace(ray,  camera);
+                            }
                         } else {
-                            pixel_color += path_trace_color;
+                            for (Ray ray : rays) {
+                                bool hitNothing = false;
+                                Eigen::Vector3f path_trace_color = pathTrace(ray, camera.maxBounces, camera, hitNothing);
+
+                                if (hitNothing) {
+                                    successfull_rays--;
+                                } else {
+                                    pixel_color += path_trace_color;
+                                }
+                            }
                         }
+
+                        // scale, gamma correct and clamp
+                        const double r = clamp(gammaCorrect(pixel_color.x() / successfull_rays), 0.0, 0.999);
+                        const double g = clamp(gammaCorrect(pixel_color.y() / successfull_rays), 0.0, 0.999);
+                        const double b = clamp(gammaCorrect(pixel_color.z() / successfull_rays), 0.0, 0.999);
+
+                        const int row = 3 * (camera.imageHeight - pixel_bottom_left_y - 1) * camera.imageWidth;
+                        const int col = 3 * pixel_bottom_left_x;
+                        const int cell = row + col;
+                        buffer[cell + 0] = r;
+                        buffer[cell + 1] = g;
+                        buffer[cell + 2] = b;
                     }
                 }
-
-                // scale, gamma correct and clamp
-                const double r = clamp(gammaCorrect(pixel_color.x() / successfull_rays), 0.0, 0.999);
-                const double g = clamp(gammaCorrect(pixel_color.y() / successfull_rays), 0.0, 0.999);
-                const double b = clamp(gammaCorrect(pixel_color.z() / successfull_rays), 0.0, 0.999);
-
-                const int row = 3 * (camera.imageHeight - pixel_bottom_left_y - 1) * camera.imageWidth;
-                const int col = 3 * pixel_bottom_left_x;
-                const int cell = row + col;
-                buffer[cell + 0] = r;
-                buffer[cell + 1] = g;
-                buffer[cell + 2] = b;
-            }
+            });
         }
+
+        // Wait for all threads to complete
+        for (int thread_index = 0 ; thread_index < num_threads ; thread_index++) {
+            threads[thread_index].join();
+        }
+
         std::cerr << "\nDone.\n";
 
         save_ppm(camera.filename, buffer, camera.imageWidth, camera.imageHeight);
