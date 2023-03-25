@@ -42,7 +42,7 @@ Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const
 Eigen::Vector3f Phong::phongShade(const Ray& rayIn, const HitRecord& hitRecord, const HittableList& world, const Eigen::Vector3f light_position, const Eigen::Vector3f light_direction, const Eigen::Vector3f& diffuse_color, const Eigen::Vector3f& specular_color, bool globalIllumination) const {
     // Shadow ray
     HitRecord shadowHitRecord;
-    if (world.hit(Ray(hitRecord.point + (shadowAcneBias * hitRecord.outwardNormal), light_direction), 0.001, (hitRecord.point + (shadowAcneBias * hitRecord.normal) - light_position).norm(), shadowHitRecord))
+    if (world.hit(Ray(hitRecord.point + (shadowAcneBias * hitRecord.outwardNormal), light_direction, false), 0.001, (hitRecord.point + (shadowAcneBias * hitRecord.normal) - light_position).norm(), shadowHitRecord))
         return Eigen::Vector3f(0, 0, 0);
 
     // Shading
@@ -67,7 +67,7 @@ Ray Phong::scatter(const Ray& rayIn, const HitRecord& hitRecord, bool twoSideRen
 
     // Catch degenerate scatter direction
     if (scatter_direction.isZero())
-        scatter_direction = reflection_normal;
+        scatter_direction = reflection_normal.normalized();
 
-    return Ray(hitRecord.point, scatter_direction);
+    return Ray(hitRecord.point, scatter_direction, false);
 }

@@ -12,8 +12,10 @@ private:
     Eigen::Vector3f origin;
     Eigen::Vector3f direction;
 public:
+    bool initialRay;
+
     Ray();
-    Ray(const Eigen::Vector3f& origin, const Eigen::Vector3f& direction);
+    Ray(const Eigen::Vector3f& origin, const Eigen::Vector3f& direction, bool initialRay);
 
     Eigen::Vector3f getOrigin() const;
     Eigen::Vector3f getDirection() const;

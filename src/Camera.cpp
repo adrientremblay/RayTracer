@@ -52,12 +52,13 @@ fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normal
         << "filename: " << filename << '\n'
         << "Global Illumination: " << globalIllumination << '\n'
     //    << "raysPerPixel: " << raysPerPixel << '\n'
+        << "Two Side Render: " << twoSideRender << '\n'
     ;
 #endif
 }
 
 Ray Camera::getRay(double ray_x, double ray_y) const {
-    return Ray(centre, (lowerLeftCorner + (ray_x / imageWidth) * horizontal + (ray_y / imageHeight) * vertical - centre).normalized());
+    return Ray(centre, (lowerLeftCorner + (ray_x / imageWidth) * horizontal + (ray_y / imageHeight) * vertical - centre).normalized(), true);
 }
 
 std::vector<Ray> Camera::sampleRays(double pixel_bottom_left_x, double pixel_bottom_left_y) {

@@ -173,6 +173,7 @@ RayTracer::RayTracer(nlohmann::json& j) {
     }
 }
 
+// todo: move all this shit to the camera clas fuck it lmao
 void RayTracer::run() {
     for (Camera camera : cameras)  {
         // Render
@@ -183,13 +184,29 @@ void RayTracer::run() {
                 Eigen::Vector3f pixel_color(0, 0, 0);
 
                 std::vector<Ray> rays = std::move(camera.sampleRays(pixel_bottom_left_x, pixel_bottom_left_y));
-                for (Ray ray : rays)
-                    pixel_color += rayColor(ray, camera.maxBounces, camera);
+
+                int successfull_rays = rays.size();
+                if (!camera.globalIllumination) {
+                    for (Ray ray : rays) {
+                        pixel_color += rayTrace(ray,  camera);
+                    }
+                } else {
+                    for (Ray ray : rays) {
+                        bool hitNothing = false;
+                        Eigen::Vector3f path_trace_color = pathTrace(ray, camera.maxBounces, camera, hitNothing);
+
+                        if (hitNothing) {
+                            successfull_rays--;
+                        } else {
+                            pixel_color += path_trace_color;
+                        }
+                    }
+                }
 
                 // scale, gamma correct and clamp
-                const double r = clamp(gammaCorrect(pixel_color.x() / rays.size()), 0.0, 0.999);
-                const double g = clamp(gammaCorrect(pixel_color.y() / rays.size()), 0.0, 0.999);
-                const double b = clamp(gammaCorrect(pixel_color.z() / rays.size()), 0.0, 0.999);
+                const double r = clamp(gammaCorrect(pixel_color.x() / successfull_rays), 0.0, 0.999);
+                const double g = clamp(gammaCorrect(pixel_color.y() / successfull_rays), 0.0, 0.999);
+                const double b = clamp(gammaCorrect(pixel_color.z() / successfull_rays), 0.0, 0.999);
 
                 const int row = 3 * (camera.imageHeight - pixel_bottom_left_y - 1) * camera.imageWidth;
                 const int col = 3 * pixel_bottom_left_x;
@@ -205,24 +222,29 @@ void RayTracer::run() {
     }
 }
 
-Eigen::Vector3f RayTracer::rayColor(const Ray& ray, int depth, const Camera& camera) {
+Eigen::Vector3f RayTracer::rayTrace(const Ray& ray, const Camera& camera) {
     HitRecord hitRecord;
     if (world.hit(ray, 0.001, infinity, hitRecord)) {
-        if (camera.globalIllumination) {
-            if (depth <= 0 || random_double() <= camera.probTerminate) {
-                // finally now we use the lights to calculate the final result
-                return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world, camera.globalIllumination, camera.antiAliasing);
-            }
-
-            Ray scatterRay = hitRecord.material->scatter(ray, hitRecord, camera.twoSideRender);
-            return vector_multiply(hitRecord.material->diffuseColor, rayColor(scatterRay, depth-1, camera));
-        } else {
-            // do the calculations for the light as we are ray tracing
-            return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world, camera.globalIllumination, camera.antiAliasing);
-        }
+        return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world, camera.globalIllumination, camera.antiAliasing);
     }
 
     return camera.bkc;
+}
+
+Eigen::Vector3f RayTracer::pathTrace(const Ray& ray, int depth, const Camera& camera, bool& hitNothing) {
+    HitRecord hitRecord;
+    if (world.hit(ray, 0.001, infinity, hitRecord)) {
+        if (depth <= 0 || random_double() <= camera.probTerminate) {
+            // finally now we use the lights to calculate the final result
+            return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world, camera.globalIllumination, camera.antiAliasing);
+        }
+
+        Ray scatterRay = hitRecord.material->scatter(ray, hitRecord, camera.twoSideRender);
+        return vector_multiply(hitRecord.material->diffuseColor, pathTrace(scatterRay, depth-1, camera, hitNothing));
+    }
+
+    hitNothing = true;
+    return Eigen::Vector3f(0,0,0); // should not be used
 }
 
 inline float RayTracer::gammaCorrect(float color) {

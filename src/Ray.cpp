@@ -8,7 +8,7 @@ Ray::Ray() {
 
 }
 
-Ray::Ray(const Eigen::Vector3f& origin, const Eigen::Vector3f& direction) : origin(origin), direction(direction) {
+Ray::Ray(const Eigen::Vector3f& origin, const Eigen::Vector3f& direction, bool initialRay) : origin(origin), direction(direction), initialRay(initialRay) {
 
 }
 
