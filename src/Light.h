@@ -6,7 +6,6 @@
 #define RAYTRACER_LIGHT_H
 
 #include "Eigen/Dense"
-#include "Camera.h"
 #include "Hittable.h"
 
 class Light {

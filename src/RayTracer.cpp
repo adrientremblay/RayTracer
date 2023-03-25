@@ -12,8 +12,6 @@
 #include "Camera.h"
 #include "Phong.h"
 #include "Rectangle.h"
-#include "AreaLight.h"
-#include "RandomRaySamplingStrategy.h"
 #include <thread>
 
 RayTracer::RayTracer(nlohmann::json& j) {
@@ -196,30 +194,12 @@ void RayTracer::run() {
                     for (int pixel_bottom_left_x = 0 ; pixel_bottom_left_x < camera.imageWidth ; pixel_bottom_left_x++) {
                         Eigen::Vector3f pixel_color(0, 0, 0);
 
-                        std::vector<Ray> rays = std::move(camera.sampleRays(pixel_bottom_left_x, pixel_bottom_left_y));
-
-                        int successfull_rays = rays.size();
-                        if (!camera.globalIllumination) {
-                            for (Ray ray : rays) {
-                                pixel_color += rayTrace(ray,  camera);
-                            }
-                        } else {
-                            for (Ray ray : rays) {
-                                bool hitNothing = false;
-                                Eigen::Vector3f path_trace_color = pathTrace(ray, camera.maxBounces, camera, hitNothing);
-
-                                if (hitNothing) {
-                                    successfull_rays--;
-                                } else {
-                                    pixel_color += path_trace_color;
-                                }
-                            }
-                        }
+                        camera.sampleRays(pixel_bottom_left_x, pixel_bottom_left_y, pixel_color, world, pointLights, areaLights);
 
                         // scale, gamma correct and clamp
-                        const double r = clamp(gammaCorrect(pixel_color.x() / successfull_rays), 0.0, 0.999);
-                        const double g = clamp(gammaCorrect(pixel_color.y() / successfull_rays), 0.0, 0.999);
-                        const double b = clamp(gammaCorrect(pixel_color.z() / successfull_rays), 0.0, 0.999);
+                        const double r = clamp(gammaCorrect(pixel_color.x()), 0.0, 0.999);
+                        const double g = clamp(gammaCorrect(pixel_color.y()), 0.0, 0.999);
+                        const double b = clamp(gammaCorrect(pixel_color.z()), 0.0, 0.999);
 
                         const int row = 3 * (camera.imageHeight - pixel_bottom_left_y - 1) * camera.imageWidth;
                         const int col = 3 * pixel_bottom_left_x;
@@ -243,30 +223,6 @@ void RayTracer::run() {
     }
 }
 
-Eigen::Vector3f RayTracer::rayTrace(const Ray& ray, const Camera& camera) {
-    HitRecord hitRecord;
-    if (world.hit(ray, 0.001, infinity, hitRecord)) {
-        return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world, camera.globalIllumination, camera.antiAliasing);
-    }
-
-    return camera.bkc;
-}
-
-Eigen::Vector3f RayTracer::pathTrace(const Ray& ray, int depth, const Camera& camera, bool& hitNothing) {
-    HitRecord hitRecord;
-    if (world.hit(ray, 0.001, infinity, hitRecord)) {
-        if (depth <= 0 || random_double() <= camera.probTerminate) {
-            // finally now we use the lights to calculate the final result
-            return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world, camera.globalIllumination, camera.antiAliasing);
-        }
-
-        Ray scatterRay = hitRecord.material->scatter(ray, hitRecord, camera.twoSideRender);
-        return vector_multiply(hitRecord.material->diffuseColor, pathTrace(scatterRay, depth-1, camera, hitNothing));
-    }
-
-    hitNothing = true;
-    return Eigen::Vector3f(0,0,0); // should not be used
-}
 
 inline float RayTracer::gammaCorrect(float color) {
 # if GAMMA_CORRECTION_ENABLED

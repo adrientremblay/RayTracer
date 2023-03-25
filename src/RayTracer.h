@@ -27,8 +27,6 @@ public:
     RayTracer(nlohmann::json& j);
     void run();
 private:
-    Eigen::Vector3f rayTrace(const Ray& ray, const Camera& camera);
-    Eigen::Vector3f pathTrace(const Ray& ray, int depth, const Camera& camera, bool& hitNothing);
     static inline float gammaCorrect(float color);
 };
 

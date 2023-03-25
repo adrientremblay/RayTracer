@@ -8,6 +8,9 @@
 #include "RandomRaySamplingStrategy.h"
 #include "StratifiedNNRaySamplingStrategy.h"
 #include "StratifiedNMRaySamplingStrategy.h"
+#include "Hittable.h"
+#include <memory>
+#include "Material.h"
 
 #define PRINT_CAMERA_INFO
 
@@ -61,14 +64,54 @@ Ray Camera::getRay(double ray_x, double ray_y) const {
     return Ray(centre, (lowerLeftCorner + (ray_x / imageWidth) * horizontal + (ray_y / imageHeight) * vertical - centre).normalized(), true);
 }
 
-std::vector<Ray> Camera::sampleRays(double pixel_bottom_left_x, double pixel_bottom_left_y) {
+void Camera::sampleRays(double pixel_bottom_left_x, double pixel_bottom_left_y, Eigen::Vector3f& pixelColor, const HittableList& world, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights) {
+    // Getting the ray coordinates todo: remove this
     std::vector<RayCoord> rayCoords = std::move(raySamplingStrategy->sampleRayCoords(pixel_bottom_left_x, pixel_bottom_left_y, raysPerPixel));
 
-    std::vector<Ray> rays;
-    rays.reserve(rayCoords.size());
+    int successful_rays = rayCoords.size();
+    for (RayCoord rayCoord : rayCoords) {
+        Ray ray = getRay(rayCoord.x, rayCoord.y);
 
-    for (RayCoord rayCoord : rayCoords)
-        rays.push_back(getRay(rayCoord.x, rayCoord.y));
+        if (!globalIllumination) {
+            // Ray tracing the ray
+            pixelColor += rayTrace(ray, world, pointLights, areaLights);
+        } else {
+            // Path tracing the ray
+            bool hitNothing = false;
+            Eigen::Vector3f path_trace_color = pathTrace(ray, world, pointLights, areaLights, maxBounces, hitNothing);
 
-    return rays;
+            if (hitNothing) {
+                successful_rays--;
+            } else {
+                pixelColor += path_trace_color;
+            }
+        }
+    }
+
+    pixelColor = Eigen::Vector3f(pixelColor.x() / successful_rays, pixelColor.y() / successful_rays, pixelColor.z() / successful_rays);
+}
+
+Eigen::Vector3f Camera::rayTrace(const Ray& ray, const HittableList& world, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights) {
+    HitRecord hitRecord;
+    if (world.hit(ray, 0.001, infinity, hitRecord)) {
+        return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world, globalIllumination, antiAliasing);
+    }
+
+    return bkc;
+}
+
+Eigen::Vector3f Camera::pathTrace(const Ray& ray, const HittableList& world, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights, int depth, bool& hitNothing) {
+    HitRecord hitRecord;
+    if (world.hit(ray, 0.001, infinity, hitRecord)) {
+        if (depth <= 0 || random_double() <= probTerminate) {
+            // finally now we use the lights to calculate the final result
+            return hitRecord.material->color(ray, hitRecord, pointLights, areaLights, world, globalIllumination, antiAliasing);
+        }
+
+        Ray scatterRay = hitRecord.material->scatter(ray, hitRecord, twoSideRender);
+        return vector_multiply(hitRecord.material->diffuseColor, pathTrace(scatterRay, world, pointLights, areaLights, depth-1, hitNothing));
+    }
+
+    hitNothing = true;
+    return Eigen::Vector3f(0,0,0); // should not be used
 }
