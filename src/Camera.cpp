@@ -70,25 +70,29 @@ void Camera::sampleRays(double pixel_bottom_left_x, double pixel_bottom_left_y, 
 
     int successful_rays = rayCoords.size();
     for (RayCoord rayCoord : rayCoords) {
-        Ray ray = getRay(rayCoord.x, rayCoord.y);
-
-        if (!globalIllumination) {
-            // Ray tracing the ray
-            pixelColor += rayTrace(ray, world, pointLights, areaLights);
-        } else {
-            // Path tracing the ray
-            bool hitNothing = false;
-            Eigen::Vector3f path_trace_color = pathTrace(ray, world, pointLights, areaLights, maxBounces, hitNothing);
-
-            if (hitNothing) {
-                successful_rays--;
-            } else {
-                pixelColor += path_trace_color;
-            }
-        }
+        sampleRay(rayCoord.x, rayCoord.y, pixelColor, world, pointLights, areaLights, successful_rays);
     }
 
     pixelColor = Eigen::Vector3f(pixelColor.x() / successful_rays, pixelColor.y() / successful_rays, pixelColor.z() / successful_rays);
+}
+
+void Camera::sampleRay(double ray_x, double ray_y, Eigen::Vector3f& pixelColor, const HittableList& world, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights, int& successfulRays) {
+    Ray ray = getRay(ray_x, ray_y);
+
+    if (!globalIllumination) {
+        // Ray tracing the ray
+        pixelColor += rayTrace(ray, world, pointLights, areaLights);
+    } else {
+        // Path tracing the ray
+        bool hitNothing = false;
+        Eigen::Vector3f path_trace_color = pathTrace(ray, world, pointLights, areaLights, maxBounces, hitNothing);
+
+        if (hitNothing) {
+            successfulRays--;
+        } else {
+            pixelColor += path_trace_color;
+        }
+    }
 }
 
 Eigen::Vector3f Camera::rayTrace(const Ray& ray, const HittableList& world, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights) {
