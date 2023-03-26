@@ -2,3 +2,5 @@
 - Variable checking when loading JSON??? for example making sure raysPerPixel has 1-3 vals
 - Switch to using std::array instead of std::vector wherever possible
 - Scene struct
+- Scene of my creation
+- make sure area lights work
