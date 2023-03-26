@@ -18,7 +18,7 @@ Eigen::Vector3f Phong::color(const Ray& rayIn, const HitRecord& hitRecord, const
     }
 
     for (AreaLight area_light : areaLights) {
-        if (area_light.useCenter || antiAliasing) {
+        if (globalIllumination || area_light.useCenter || antiAliasing) {
             ret += phongShade(rayIn, hitRecord, world, area_light.getPosition(), area_light.getDirection(hitRecord), area_light.diffuseColor, area_light.specularColor, globalIllumination);
         } else {
             Eigen::Vector3f temp(0, 0, 0);
