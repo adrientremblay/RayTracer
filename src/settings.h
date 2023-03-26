@@ -7,5 +7,6 @@
 
 #define GAMMA_CORRECTION_ENABLED false
 #define PRINT_DEBUG_INFO true
+#define LEVERAGE_MULTITHREADING false
 
 #endif //RAYTRACER_SETTINGS_H

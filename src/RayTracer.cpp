@@ -179,12 +179,12 @@ void RayTracer::run() {
         std::cout << "\nStarting render for camera " << camera.cameraNum << "..." << std::endl;
 #endif
         std::vector<double> buffer(3*camera.imageWidth*camera.imageHeight);
+        double rows_rendered = 0;
 
+#if LEVERAGE_MULTITHREADING
         const int num_threads = 8;
         const int rows_per_thread = camera.imageHeight / num_threads; // todo: what if this isn't a nice int???
         std::vector<std::thread> threads(num_threads);
-
-        double rows_rendered = 0;
 
         for (int thread_index = 0 ; thread_index < num_threads ; thread_index++) {
             threads[thread_index] = std::thread([&, thread_index]() {
@@ -218,6 +218,31 @@ void RayTracer::run() {
         for (int thread_index = 0 ; thread_index < num_threads ; thread_index++) {
             threads[thread_index].join();
         }
+#else
+        for (int pixel_bottom_left_y = 0 ; pixel_bottom_left_y < camera.imageHeight ; pixel_bottom_left_y++) {
+            for (int pixel_bottom_left_x = 0 ; pixel_bottom_left_x < camera.imageWidth ; pixel_bottom_left_x++) {
+                Eigen::Vector3f pixel_color(0, 0, 0);
+
+                camera.sampleRays(pixel_bottom_left_x, pixel_bottom_left_y, pixel_color, world, pointLights, areaLights);
+
+                // scale, gamma correct and clamp
+                const double r = clamp(gammaCorrect(pixel_color.x()), 0.0, 0.999);
+                const double g = clamp(gammaCorrect(pixel_color.y()), 0.0, 0.999);
+                const double b = clamp(gammaCorrect(pixel_color.z()), 0.0, 0.999);
+
+                const int row = 3 * (camera.imageHeight - pixel_bottom_left_y - 1) * camera.imageWidth;
+                const int col = 3 * pixel_bottom_left_x;
+                const int cell = row + col;
+                buffer[cell + 0] = r;
+                buffer[cell + 1] = g;
+                buffer[cell + 2] = b;
+            }
+            rows_rendered++;
+#if PRINT_DEBUG_INFO
+            std::cout << "Rendering is " << (rows_rendered/camera.imageHeight)*100 << "% complete\n";
+#endif
+        }
+#endif
 
 #if PRINT_DEBUG_INFO
         std::cout << "\nDone all renders\n";
