@@ -251,7 +251,7 @@
 
         "globalillum": true,
         "antialiasing": true,
-        "raysperpixel": [5, 5],
+        "raysperpixel": [10, 10],
         "maxbounces": 3,
         "probterminate": 0.3333
     }
