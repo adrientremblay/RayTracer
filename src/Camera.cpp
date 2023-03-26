@@ -7,6 +7,9 @@
 #include "Hittable.h"
 #include <memory>
 #include "Material.h"
+#include "settings.h"
+
+int Camera::camera_count = 1;
 
 Camera::Camera(double fov, double imageWidth, double imageHeight, Eigen::Vector3f lookat, Eigen::Vector3f up, Eigen::Vector3f centre, Eigen::Vector3f ai, Eigen::Vector3f bkc, std::string filename, bool globalIllumination, const std::vector<int>& raysPerPixel, int maxBounces, float probTerminate, bool antiAliasing, bool twoSideRender) :
 fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normalized()), up(up.normalized()), centre(centre), ai(ai), bkc(bkc), filename(filename), globalIllumination(globalIllumination), raysPerPixel(raysPerPixel), maxBounces(maxBounces), probTerminate(probTerminate), antiAliasing(antiAliasing), twoSideRender(twoSideRender) {
@@ -36,20 +39,29 @@ fov(fov), imageWidth(imageWidth), imageHeight(imageHeight), lookat(lookat.normal
         raySamplingStrat = RANDOM;
     }
 
-#ifdef PRINT_CAMERA_INFO
-    std::cout << "Camera created with the following values \n"
-        << "FOV: " << fov << '\n'
-        << "Image Width: " << imageWidth << '\n'
-        << "Image Height: " << imageHeight << '\n'
-        << "Lookat Vector: " << lookat.transpose() << '\n'
-        << "Up Vector: " << up.transpose() << '\n'
-        << "Centre Vector: " << centre.transpose() << '\n'
-        << "ai: " << ai.transpose() << '\n'
-        << "bkc: " << bkc.transpose() << '\n'
-        << "filename: " << filename << '\n'
-        << "Global Illumination: " << globalIllumination << '\n'
-    //    << "raysPerPixel: " << raysPerPixel << '\n'
-        << "Two Side Render: " << twoSideRender << '\n'
+    cameraNum = camera_count++;
+
+#if PRINT_DEBUG_INFO
+    std::cout
+        << "\n"
+        << "Camera " << cameraNum << " created with the following values:\n"
+        << "\tFOV: " << fov << '\n'
+        << "\tImage Width: " << imageWidth << '\n'
+        << "\tImage Height: " << imageHeight << '\n'
+        << "\tLookat Vector: " << lookat.transpose() << '\n'
+        << "\tUp Vector: " << up.transpose() << '\n'
+        << "\tCentre Vector: " << centre.transpose() << '\n'
+        << "\tai: " << ai.transpose() << '\n'
+        << "\tbkc: " << bkc.transpose() << '\n'
+        << "\tfilename: " << filename << '\n'
+        << "\tGlobal Illumination: " << globalIllumination << '\n'
+        << "\traysPerPixel: "; for (int v : raysPerPixel) std::cout << v << ' ';
+    std::cout
+        << "\tTwo Side Render: " << twoSideRender << '\n'
+        << "\tMax Bounces: " << maxBounces << '\n'
+        << "\tProb Termination: " << maxBounces << '\n'
+        << "\tAnti-Aliasing: " << antiAliasing << '\n'
+        << "\tTwo Side Rendering: " << antiAliasing << '\n'
     ;
 #endif
 }
@@ -130,6 +142,7 @@ void Camera::sampleRay(double ray_x, double ray_y, Eigen::Vector3f& pixelColor, 
     if (!globalIllumination) {
         // Ray tracing the ray
         pixelColor += rayTrace(ray, world, pointLights, areaLights);
+        successfulRays++;
     } else {
         // Path tracing the ray
         bool hitNothing = false;

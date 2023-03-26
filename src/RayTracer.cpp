@@ -13,6 +13,7 @@
 #include "Phong.h"
 #include "Rectangle.h"
 #include <thread>
+#include "settings.h"
 
 RayTracer::RayTracer(nlohmann::json& j) {
     // Parsing geometry section
@@ -172,15 +173,11 @@ RayTracer::RayTracer(nlohmann::json& j) {
     }
 }
 
-Eigen::Vector3f colorPixel(const Camera& camera, int pixel_bottom_left_x, int pixel_bottom_left_y) {
-   return Eigen::Vector3f(1, 0.5, 0.2);
-
-   /*
-    */
-}
-
 void RayTracer::run() {
     for (Camera camera : cameras)  {
+#if PRINT_DEBUG_INFO
+        std::cout << "\nStarting render for camera " << camera.cameraNum << "..." << std::endl;
+#endif
         std::vector<double> buffer(3*camera.imageWidth*camera.imageHeight);
 
         const int num_threads = 8;
@@ -188,7 +185,6 @@ void RayTracer::run() {
         std::vector<std::thread> threads(num_threads);
 
         double rows_rendered = 0;
-        double rows_to_render = camera.imageHeight;
 
         for (int thread_index = 0 ; thread_index < num_threads ; thread_index++) {
             threads[thread_index] = std::thread([&, thread_index]() {
@@ -211,7 +207,9 @@ void RayTracer::run() {
                         buffer[cell + 2] = b;
                     }
                     rows_rendered++;
-                    std::cout << "Rendering is " << rows_rendered/rows_to_render << "% complete\n";
+#if PRINT_DEBUG_INFO
+                    std::cout << "Rendering is " << (rows_rendered/camera.imageHeight)*100 << "% complete\n";
+#endif
                 }
             });
         }
@@ -221,7 +219,9 @@ void RayTracer::run() {
             threads[thread_index].join();
         }
 
-        std::cout << "\nDone.\n";
+#if PRINT_DEBUG_INFO
+        std::cout << "\nDone all renders\n";
+#endif
 
         save_ppm(camera.filename, buffer, camera.imageWidth, camera.imageHeight);
     }
