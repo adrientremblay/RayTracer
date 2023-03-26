@@ -3,4 +3,3 @@
 - Switch to using std::array instead of std::vector wherever possible
 - Scene struct
 - Scene of my creation
-- make sure area lights work
