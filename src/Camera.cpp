@@ -73,7 +73,6 @@ Ray Camera::getRay(double ray_x, double ray_y) const {
 void Camera::sampleRays(double pixel_bottom_left_x, double pixel_bottom_left_y, Eigen::Vector3f& pixelColor, const HittableList& world, const std::vector<PointLight>& pointLights, const std::vector<AreaLight>& areaLights) {
     int successful_rays = 0;
 
-    // todo: make the switch cleaner
     switch (raySamplingStrat) {
         int num_rays;
         int strata_cols, strata_rows, rays_per_strata;
